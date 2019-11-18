@@ -12,6 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "items", uniqueConstraints = {@UniqueConstraint(columnNames = {"userid", "itemname"})})
 @ApiModel(value = "Item", description = "A list of items for the user")
+@JsonIgnoreProperties({"itemhistories", "user"})
 public class Item extends Auditable {
 
     @Id
@@ -25,7 +26,6 @@ public class Item extends Auditable {
     private String lentto;
     private String lentdate;
     private String lendnotes;
-    private Boolean beingreturned = false;
 
     @ManyToOne
     @JoinColumn(name = "userid", nullable = false)
@@ -39,26 +39,18 @@ public class Item extends Auditable {
     public Item() {
     }
 
-    public Item(String itemname,
+    public Item(User user,
+                String itemname,
                 String itemdescription,
                 String lentto,
                 String lentdate,
-                String lendnotes,
-                Boolean beingreturned,
-                User user,
-                List<ItemHistory> itemHistory) {
+                String lendnotes) {
+        this.user = user;
         this.itemname = itemname;
         this.itemdescription = itemdescription;
         this.lentto = lentto;
         this.lentdate = lentdate;
         this.lendnotes = lendnotes;
-        this.beingreturned = beingreturned;
-        this.user = user;
-
-        for (ItemHistory ih : itemHistory) {
-            ih.setItem(this);
-        }
-        this.itemhistories = itemHistory;
     }
 
     public long getItemid() {
@@ -107,14 +99,6 @@ public class Item extends Auditable {
 
     public void setLendnotes(String lendnotes) {
         this.lendnotes = lendnotes;
-    }
-
-    public Boolean getBeingreturned() {
-        return beingreturned;
-    }
-
-    public void setBeingreturned(Boolean beingreturned) {
-        this.beingreturned = beingreturned;
     }
 
     public User getUser() {

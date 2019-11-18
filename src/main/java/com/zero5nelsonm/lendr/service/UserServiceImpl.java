@@ -3,9 +3,7 @@ package com.zero5nelsonm.lendr.service;
 import com.zero5nelsonm.lendr.exceptions.ResourceFoundException;
 import com.zero5nelsonm.lendr.exceptions.ResourceNotFoundException;
 import com.zero5nelsonm.lendr.logging.Loggable;
-import com.zero5nelsonm.lendr.model.Role;
-import com.zero5nelsonm.lendr.model.User;
-import com.zero5nelsonm.lendr.model.UserRoles;
+import com.zero5nelsonm.lendr.model.*;
 import com.zero5nelsonm.lendr.repository.RoleRepository;
 import com.zero5nelsonm.lendr.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +91,17 @@ public class UserServiceImpl implements UserService {
         }
         newUser.setUserroles(newRoles);
         newUser.setEmail(user.getEmail());
+
+        for (Item i : user.getUseritems()) {
+            newUser.getUseritems()
+                    .add(new Item(
+                            newUser,
+                            i.getItemname(),
+                            i.getItemdescription(),
+                            i.getLentto(),
+                            i.getLentdate(),
+                            i.getLendnotes()));
+        }
 
         return userRepository.save(newUser);
     }

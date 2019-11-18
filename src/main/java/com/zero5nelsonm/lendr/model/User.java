@@ -19,6 +19,7 @@ import java.util.List;
 @Loggable
 @Entity
 @Table(name = "users")
+@JsonIgnoreProperties({"useritems", "userroles"})
 public class User extends Auditable {
 
     @ApiModelProperty(name = "user id",

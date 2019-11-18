@@ -29,12 +29,16 @@ public class ItemHistory extends Auditable {
     public ItemHistory() {
     }
 
-    public ItemHistory(String lentto, String lentdate, String lendnotes, String datereturned, Item item) {
+    public ItemHistory(Item item,
+                       String lentto,
+                       String lentdate,
+                       String lendnotes,
+                       String datereturned) {
+        this.item = item;
         this.lentto = lentto;
         this.lentdate = lentdate;
         this.lendnotes = lendnotes;
         this.datereturned = datereturned;
-        this.item = item;
     }
 
     public long getItemhistoryid() {

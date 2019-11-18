@@ -40,7 +40,7 @@ public class OpenController {
     // Create the user and Return the access token
     // http://localhost:2019/createnewuser
     // Just create the user
-    // http://localhost:2019/createnewuser?returntoken=false
+    // http://localhost:2019/createnewuser?returninfo=false
     //
     // {
     //     "username" : "Test",
@@ -59,7 +59,7 @@ public class OpenController {
 
     @PostMapping(value = "/createnewuser", consumes = {"application/json"}, produces = {"application/json"})
     public ResponseEntity<?> addNewUser(HttpServletRequest httpServletRequest,
-                                        @RequestParam(defaultValue = "true") boolean returntoken,
+                                        @RequestParam(defaultValue = "true") boolean returninfo,
                                         @Valid
                                         @RequestBody UserMinimum newminuser) throws URISyntaxException {
         logger.trace(httpServletRequest.getMethod()
@@ -86,7 +86,7 @@ public class OpenController {
         responseHeaders.setLocation(newUserURI);
 
         String theToken = "";
-        if (returntoken) {
+        if (returninfo) {
             // Return the access token
             RestTemplate restTemplate = new RestTemplate();
             String requestURI = "http://" + httpServletRequest.getServerName() + getPort(httpServletRequest) + "/login";
