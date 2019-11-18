@@ -104,6 +104,7 @@
     </dependencies>
 
     <build>
+        <finalName>zero5nelsonm-lendr</finalName>
 
         <plugins>
 
