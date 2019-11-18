@@ -19,6 +19,7 @@ import java.util.List;
 @Loggable
 @Entity
 @Table(name = "users")
+@JsonIgnoreProperties({"useritems", "userroles"})
 public class User extends Auditable {
 
     @ApiModelProperty(name = "user id",
@@ -53,6 +54,10 @@ public class User extends Auditable {
     @JsonIgnoreProperties("user")
     private List<UserRoles> userroles = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("user")
+    private List<Item> useritems = new ArrayList<>();
+
     public User() {
     }
 
@@ -63,6 +68,7 @@ public class User extends Auditable {
         setUsername(username);
         setPassword(password);
         this.email = email;
+
         for (UserRoles ur : userRoles) {
             ur.setUser(this);
         }
@@ -120,6 +126,14 @@ public class User extends Auditable {
 
     public void setUserroles(List<UserRoles> userroles) {
         this.userroles = userroles;
+    }
+
+    public List<Item> getUseritems() {
+        return useritems;
+    }
+
+    public void setUseritems(List<Item> useritems) {
+        this.useritems = useritems;
     }
 
     @JsonIgnore

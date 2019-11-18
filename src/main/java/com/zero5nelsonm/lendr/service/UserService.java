@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface UserService {
 
+    List<User> findAll(Pageable pageable);
+
     User findUserById(long id);
 
     User findByName(String name);

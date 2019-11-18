@@ -1,8 +1,7 @@
 package com.zero5nelsonm.lendr;
 
-import com.zero5nelsonm.lendr.model.Role;
-import com.zero5nelsonm.lendr.model.User;
-import com.zero5nelsonm.lendr.model.UserRoles;
+import com.zero5nelsonm.lendr.model.*;
+import com.zero5nelsonm.lendr.service.ItemService;
 import com.zero5nelsonm.lendr.service.RoleService;
 import com.zero5nelsonm.lendr.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.List;
 
 @Transactional
 @Component
@@ -21,7 +21,6 @@ public class SeedData implements CommandLineRunner {
 
     @Autowired
     UserService userService;
-
 
     @Override
     public void run(String[] args) throws Exception {
@@ -57,6 +56,12 @@ public class SeedData implements CommandLineRunner {
                 System.getenv("LENDR_DATA_PASSWORD"),
                 System.getenv("LENDR_DATA_EMAIL"),
                 datas);
+        u2.getUseritems()
+                .add(new Item(u2, "Table Saw",
+                        "Dewalt Table Saw",
+                        "Herbert",
+                        "November 11, 2019",
+                        ""));
         userService.save(u2);
 
         // user
@@ -67,6 +72,30 @@ public class SeedData implements CommandLineRunner {
                 System.getenv("LENDR_USER_PASSWORD"),
                 System.getenv("LENDR_USER_EMAIL"),
                 users);
+        u3.getUseritems()
+                .add(new Item(u3, "Chop Saw",
+                        "Dewalt Chop Saw",
+                        "Allen",
+                        "November 21, 2019",
+                        null));
+        u3.getUseritems()
+                .add(new Item(u3, "Drill",
+                        "Dewalt Drill",
+                        "Allen",
+                        "November 21, 2019",
+                        null));
+        u3.getUseritems().get(0).getItemhistories()
+                .add(new ItemHistory(u3.getUseritems().get(0),
+                        "Bob",
+                        "April 15, 2019",
+                        null,
+                        "May 21, 2019"));
+        u3.getUseritems().get(1).getItemhistories()
+                .add(new ItemHistory(u3.getUseritems().get(1),
+                        "Terry",
+                        "April 19, 2019",
+                        null,
+                        "April 27, 2019"));
         userService.save(u3);
     }
 }
