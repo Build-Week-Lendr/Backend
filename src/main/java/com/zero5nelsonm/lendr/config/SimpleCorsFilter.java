@@ -23,16 +23,12 @@ public class SimpleCorsFilter implements Filter {
                          FilterChain chain) throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) res;
         HttpServletRequest request = (HttpServletRequest) req;
-        response.setHeader("Access-Control-Allow-Origin",
-                "*");
-        //        response.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS, DELETE");
-        response.setHeader("Access-Control-Allow-Methods",
-                "*");
-        //        response.setHeader("Access-Control-Allow-Headers", "x-requested-with, authorization, content-type, access_token");
-        response.setHeader("Access-Control-Allow-Headers",
-                "*");
-        response.setHeader("Access-Control-Max-Age",
-                "3600");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS, DELETE");
+        //response.setHeader("Access-Control-Allow-Methods", "*");
+        response.setHeader("Access-Control-Allow-Headers", "x-requested-with, authorization, content-type, access_token");
+        //response.setHeader("Access-Control-Allow-Headers", "*");
+        response.setHeader("Access-Control-Max-Age", "3600");
 
         if (HttpMethod.OPTIONS.name()
                 .equalsIgnoreCase(((HttpServletRequest) req).getMethod())) {
