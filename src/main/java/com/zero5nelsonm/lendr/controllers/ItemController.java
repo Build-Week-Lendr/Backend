@@ -2,6 +2,7 @@ package com.zero5nelsonm.lendr.controllers;
 
 import com.zero5nelsonm.lendr.logging.Loggable;
 import com.zero5nelsonm.lendr.model.Item;
+import com.zero5nelsonm.lendr.model.ItemNoHistory;
 import com.zero5nelsonm.lendr.model.User;
 import com.zero5nelsonm.lendr.service.ItemService;
 import com.zero5nelsonm.lendr.service.UserService;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -37,15 +39,48 @@ public class ItemController {
     UserService userService;
 
     @GetMapping(value = "/items", produces = {"application/json"})
-    public ResponseEntity<?> getCurrentUserItems(HttpServletRequest request, Authentication authentication) {
+    public ResponseEntity<?> getCurrentUserItems(HttpServletRequest request,
+                                                 Authentication authentication,
+                                                 @RequestParam(defaultValue = "false") boolean returnhistory) {
 
-        logger.trace(request.getMethod().toUpperCase() + "" + request.getRequestURI() + " accessed");
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
         User u = userService.findByName(authentication.getName());
 
         List<Item> itemList = itemService.findAllByUsername(u.getUsername());
 
+        List<ItemNoHistory> itemNoHistories = new ArrayList<>();
+
+        if (!returnhistory) {
+
+            for (Item i : itemList) {
+                itemNoHistories.add(
+                        new ItemNoHistory(
+                                i.getItemid(),
+                                i.getItemname(),
+                                i.getItemdescription(),
+                                i.getLentto(),
+                                i.getLentdate(),
+                                i.getLendnotes())
+                );
+            }
+
+            return new ResponseEntity<>(itemNoHistories, HttpStatus.OK);
+        }
+
         return new ResponseEntity<>(itemList, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/item/{itemid}", produces = {"application/json"})
+    public ResponseEntity<?> getCurrentUserItem(HttpServletRequest request, Authentication authentication, @PathVariable long itemid) {
+
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+
+        User u = userService.findByName(authentication.getName());
+
+        Item item = itemService.findItemByIdForUser(u, itemid);
+
+        return new ResponseEntity<>(item, HttpStatus.OK);
     }
 
     @PostMapping(value = "/item", consumes = {"application/json"}, produces = {"application/json"})
@@ -54,7 +89,7 @@ public class ItemController {
                                         @Valid @RequestBody Item newItem)
             throws URISyntaxException {
 
-        logger.trace(request.getMethod().toUpperCase() + "" + request.getRequestURI() + " accessed");
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
         User u = userService.findByName(authentication.getName());
         newItem.setUser(u);

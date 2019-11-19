@@ -1,56 +1,30 @@
 package com.zero5nelsonm.lendr.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.zero5nelsonm.lendr.logging.Loggable;
-import io.swagger.annotations.ApiModel;
-
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Loggable
-@Entity
-@Table(name = "items", uniqueConstraints = {@UniqueConstraint(columnNames = {"userid", "itemname"})})
-@ApiModel(value = "Item", description = "A list of items for the user")
-@JsonIgnoreProperties("user")
-public class Item extends Auditable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public class ItemNoHistory {
     private long itemid;
-
-    @Column(nullable = false)
     private String itemname;
-
     private String itemdescription;
     private String lentto;
     private String lentdate;
     private String lendnotes;
+    private List<ItemHistory> itemhistories;
 
-    @ManyToOne
-    @JoinColumn(name = "userid", nullable = false)
-    @JsonIgnoreProperties("useritems")
-    private User user;
-
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("item")
-    private List<ItemHistory> itemhistories = new ArrayList<>();
-
-    public Item() {
-    }
-
-    public Item(User user,
-                String itemname,
-                String itemdescription,
-                String lentto,
-                String lentdate,
-                String lendnotes) {
-        this.user = user;
+    public ItemNoHistory(long itemid,
+                         String itemname,
+                         String itemdescription,
+                         String lentto,
+                         String lentdate,
+                         String lendnotes) {
+        this.itemid = itemid;
         this.itemname = itemname;
         this.itemdescription = itemdescription;
         this.lentto = lentto;
         this.lentdate = lentdate;
         this.lendnotes = lendnotes;
+        this.itemhistories = new ArrayList<>();
     }
 
     public long getItemid() {
@@ -99,14 +73,6 @@ public class Item extends Auditable {
 
     public void setLendnotes(String lendnotes) {
         this.lendnotes = lendnotes;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public List<ItemHistory> getItemhistories() {
