@@ -39,8 +39,9 @@ POST
 Endpoint = "/createnewuser"  
   
 **Accepts:**  
-*Note* - `email` must use standard email format  
+Oauth2 Header info  
 Required field(s) = **ALL**  
+*Note* - `email` must use standard email format  
 ```
 {
     "username": String,
@@ -87,8 +88,9 @@ POST
 Endpoint = "/items/item"  
 
 **Accepts:**  
-*Note* - Fields that are NOT sent will automatically default to `null`.  
+Oauth2 Header info  
 Required field(s) = `itemname`  
+*Note* - Fields that are NOT sent will automatically default to `null`.  
 ```
 {
     "itemname": String,  
@@ -103,7 +105,7 @@ Required field(s) = `itemname`
 Status 201 Created && `itemid` in the header under `Location`  
 
 **Example:**  
-Send the following to "/items/item"  
+With an authenticated user, send the following to "/items/item"  
 ```
 {
     "itemname": "Chain Saw"
