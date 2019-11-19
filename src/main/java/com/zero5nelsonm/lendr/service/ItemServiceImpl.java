@@ -30,13 +30,13 @@ public class ItemServiceImpl implements ItemService {
 
     private void CheckItemByIdForUserByIdExists(long itemid, long userid) {
         if (itemRepository.checkItemByIdForUserByIdExists(itemid, userid).getCount() < 1) {
-            throw new ResourceNotFoundException("Item ID " + itemid + " does not exist for that user!");
+            throw new ResourceNotFoundException("Itemid " + itemid + " does not exist for that user!");
         }
     }
 
-    private void CheckItemByNameForUserByIdExists(Item item) {
-        if (itemRepository.checkItemByNameForUserByIdExists(item.getItemname(), item.getUser().getUserid()).getCount() > 0) {
-            throw new ResourceFoundException(item.getItemname() + " already exists!");
+    private void CheckItemByNameForUserByIdExists(Item item, long userid) {
+        if (itemRepository.checkItemByNameForUserByIdExists(item.getItemname(), userid).getCount() > 0) {
+            throw new ResourceFoundException("Itemname " + item.getItemname() + " already exists!");
         }
     }
 
@@ -57,7 +57,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item save(Item item) {
 
-        CheckItemByNameForUserByIdExists(item);
+        CheckItemByNameForUserByIdExists(item, item.getUser().getUserid());
 
         return itemRepository.save(item);
     }
@@ -70,6 +70,7 @@ public class ItemServiceImpl implements ItemService {
         Item existingItem = itemRepository.findItemByItemid(itemid);
 
         if (updateItem.getItemname() != null) {
+            CheckItemByNameForUserByIdExists(updateItem, user.getUserid());
             existingItem.setItemname(updateItem.getItemname());
         }
 
