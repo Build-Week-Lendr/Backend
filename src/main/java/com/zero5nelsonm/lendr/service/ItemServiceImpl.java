@@ -1,5 +1,6 @@
 package com.zero5nelsonm.lendr.service;
 
+import com.sun.istack.Nullable;
 import com.zero5nelsonm.lendr.exceptions.ResourceFoundException;
 import com.zero5nelsonm.lendr.exceptions.ResourceNotFoundException;
 import com.zero5nelsonm.lendr.logging.Loggable;
@@ -27,6 +28,18 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     private ItemHistoryRepository itemHistoryRepository;
 
+    private void CheckItemByIdForUserByIdExists(long itemid, long userid) {
+        if (itemRepository.checkItemByIdForUserByIdExists(itemid, userid).getCount() < 1) {
+            throw new ResourceNotFoundException("Item ID " + itemid + " does not exist for that user!");
+        }
+    }
+
+    private void CheckItemByNameForUserByIdExists(Item item) {
+        if (itemRepository.checkItemByNameForUserByIdExists(item.getItemname(), item.getUser().getUserid()).getCount() > 0) {
+            throw new ResourceFoundException(item.getItemname() + " already exists!");
+        }
+    }
+
     @Override
     public List<Item> findAllByUsername(String username) {
 
@@ -36,9 +49,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item findItemByIdForUser(User user, long itemid) {
 
-        if (itemRepository.checkItemByIdForUserByIdExists(itemid, user.getUserid()).getCount() < 1) {
-            throw new ResourceNotFoundException("Item ID " + itemid + " does not exist for that user!");
-        }
+        CheckItemByIdForUserByIdExists(itemid, user.getUserid());
 
         return itemRepository.findItemByItemid(itemid);
     }
@@ -46,9 +57,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item save(Item item) {
 
-        if (itemRepository.checkItemByNameForUserByIdExists(item.getItemname(), item.getUser().getUserid()).getCount() > 0) {
-            throw new ResourceFoundException(item.getItemname() + " already exists!");
-        }
+        CheckItemByNameForUserByIdExists(item);
 
         return itemRepository.save(item);
     }
@@ -56,9 +65,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item update(Item updateItem, long itemid, User user) {
 
-        if (itemRepository.checkItemByIdForUserByIdExists(itemid, user.getUserid()).getCount() < 1) {
-            throw new ResourceNotFoundException("Item ID " + itemid + " does not exist for that user!");
-        }
+        CheckItemByIdForUserByIdExists(itemid, user.getUserid());
 
         Item existingItem = itemRepository.findItemByItemid(itemid);
 
@@ -83,5 +90,13 @@ public class ItemServiceImpl implements ItemService {
         }
 
         return itemRepository.save(existingItem);
+    }
+
+    @Override
+    public void delete(User user, long itemid) {
+
+        CheckItemByIdForUserByIdExists(itemid, user.getUserid());
+
+        itemRepository.deleteById(itemid);
     }
 }

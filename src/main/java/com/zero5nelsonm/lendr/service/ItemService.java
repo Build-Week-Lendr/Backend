@@ -14,4 +14,6 @@ public interface ItemService {
     Item save(Item item);
 
     Item update(Item updateItem, long itemid, User user);
+
+    void delete(User user, long itemid);
 }

@@ -118,4 +118,17 @@ public class ItemController {
         itemService.update(updateItem, itemid, u);
         return  new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @DeleteMapping(value = "item/{itemid}")
+    public ResponseEntity<?> deleteItemById(HttpServletRequest request,
+                                            Authentication authentication,
+                                            @PathVariable long itemid) {
+
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+
+        User u = userService.findByName(authentication.getName());
+
+        itemService.delete(u, itemid);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
