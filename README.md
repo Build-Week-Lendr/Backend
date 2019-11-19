@@ -12,6 +12,16 @@ Endpoint = "/login"
 **Accepts:**  
 Oauth2 Header info  
 
+**Returns:**  
+```
+{
+    "access_token": String,  
+    "token_type": String,  
+    "expires_in": int,  
+    "scope": String  
+}
+```
+
 ## Logout  
 
 GET  
