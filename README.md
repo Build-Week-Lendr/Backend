@@ -3,13 +3,25 @@ Lendr Backend
 
 BASE_URL = https://zero5nelsonm-lendr.herokuapp.com  
 
+*Note* - All id's (userid, itemid, itemhistoryid) are of type `long`
+
 ## Login  
+
 Endpoint = "/login"  
-**Accepts:** Oauth2 Header info  
+
+**Accepts:**  
+Oauth2 Header info  
 
 ## Logout  
+
+GET  
 Endpoint = "/logout"  
-**Accepts:** Oauth2 Header info  
+
+**Accepts:**  
+Oauth2 Header info  
+
+**Returns:**  
+Status 200 OK  
 
 ## Create a new user  
 
@@ -41,7 +53,26 @@ Status 201 Created && `userid` in the header under `Location`
 Alternatively, you can append the aforementioned endpoint with `?returninfo=false` to  
 recieve only the header information back and no JSON.  
 
-## Create an item
+## Get user information for an authenticated user  
+
+GET  
+Endpoint = "/users/getuserinfo"  
+
+**Accepts:**  
+Oauth2 Header info  
+
+**Returns:**  
+Status 200 OK  
+```
+{
+    "userid": long,
+    "username": String,
+    "email": String
+}
+```  
+
+## Create an item  
+
 POST  
 Endpoint = "/items/item"  
 
@@ -61,7 +92,7 @@ Required field(s) = `itemname`
 **Returns:**  
 Status 201 Created && `itemid` in the header under `Location`  
 
-**Example:**
+**Example:**  
 Send the following to "/items/item"  
 ```
 {
@@ -69,12 +100,12 @@ Send the following to "/items/item"
 }
 ```  
 
-Will create an item that looks like the following when you query for the `itemid`, or list all items
+Will create an item that looks like the following when you query for the `itemid`, or list all items  
 for the user.  
 ```  
 {
-    "itemid": 10,
-    "itemname": "Chain Saw",
+    "itemid": long,
+    "itemname": String,
     "itemdescription": null,
     "lentto": null,
     "lentdate": null,
@@ -83,13 +114,14 @@ for the user.
 ``` 
 
 ## List all items for a user  
+
 GET  
 Endpoint = "/items/items"  
 
-**Accepts  :**
-Nothing  
+**Accepts:**  
+Oauth2 Header info  
 
-**Returns  :**
+**Returns:**  
 Status 200 OK  
 A list of Items for the authenticated user, for example:  
 ```  
