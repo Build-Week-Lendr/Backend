@@ -2,6 +2,7 @@ package com.zero5nelsonm.lendr.controllers;
 
 import com.zero5nelsonm.lendr.logging.Loggable;
 import com.zero5nelsonm.lendr.model.Item;
+import com.zero5nelsonm.lendr.model.ItemHistory;
 import com.zero5nelsonm.lendr.model.ItemNoHistory;
 import com.zero5nelsonm.lendr.model.User;
 import com.zero5nelsonm.lendr.service.ItemService;
@@ -21,7 +22,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -41,7 +45,7 @@ public class ItemController {
     @GetMapping(value = "/items", produces = {"application/json"})
     public ResponseEntity<?> getCurrentUserItems(HttpServletRequest request,
                                                  Authentication authentication,
-                                                 @RequestParam(defaultValue = "false") boolean returnhistory) {
+                                                 @RequestParam(defaultValue = "false") boolean returnitemhistory) {
 
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
@@ -51,7 +55,7 @@ public class ItemController {
 
         List<ItemNoHistory> itemNoHistories = new ArrayList<>();
 
-        if (!returnhistory) {
+        if (!returnitemhistory) {
 
             for (Item i : itemList) {
                 itemNoHistories.add(
@@ -72,13 +76,31 @@ public class ItemController {
     }
 
     @GetMapping(value = "/item/{itemid}", produces = {"application/json"})
-    public ResponseEntity<?> getCurrentUserItem(HttpServletRequest request, Authentication authentication, @PathVariable long itemid) {
+    public ResponseEntity<?> getCurrentUserItem(HttpServletRequest request,
+                                                Authentication authentication,
+                                                @PathVariable long itemid,
+                                                @RequestParam(defaultValue = "false") boolean beingreturned) {
 
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
         User u = userService.findByName(authentication.getName());
 
         Item item = itemService.findItemByIdForUser(u, itemid);
+
+        ItemHistory newItemHistory = new ItemHistory();
+        if (beingreturned) {
+            newItemHistory.setItem(item);
+            newItemHistory.setLentto(item.getLentto());
+            newItemHistory.setLentdate(item.getLentdate());
+            newItemHistory.setLendnotes(item.getLendnotes());
+
+            String pattern = "MM-dd-yyyy";
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+            String date = simpleDateFormat.format(new Date());
+            newItemHistory.setDatereturned(date);
+
+            item = itemService.itemHasBeenReturned(item, newItemHistory);
+        }
 
         return new ResponseEntity<>(item, HttpStatus.OK);
     }
@@ -119,7 +141,7 @@ public class ItemController {
         return  new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "item/{itemid}")
+    @DeleteMapping(value = "/item/{itemid}")
     public ResponseEntity<?> deleteItemById(HttpServletRequest request,
                                             Authentication authentication,
                                             @PathVariable long itemid) {

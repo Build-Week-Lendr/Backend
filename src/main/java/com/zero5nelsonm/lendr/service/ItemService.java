@@ -1,6 +1,7 @@
 package com.zero5nelsonm.lendr.service;
 
 import com.zero5nelsonm.lendr.model.Item;
+import com.zero5nelsonm.lendr.model.ItemHistory;
 import com.zero5nelsonm.lendr.model.User;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface ItemService {
     Item update(Item updateItem, long itemid, User user);
 
     void delete(User user, long itemid);
+
+    Item itemHasBeenReturned(Item item, ItemHistory newItemHistory);
 }

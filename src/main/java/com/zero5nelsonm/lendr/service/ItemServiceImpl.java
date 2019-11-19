@@ -100,4 +100,15 @@ public class ItemServiceImpl implements ItemService {
 
         itemRepository.deleteById(itemid);
     }
+
+    @Override
+    public Item itemHasBeenReturned(Item item, ItemHistory newItemHistory) {
+        item.setLentto(null);
+        item.setLentdate(null);
+        item.setLendnotes(null);
+        itemRepository.save(item);
+        itemHistoryRepository.save(newItemHistory);
+
+        return itemRepository.findItemByItemid(item.getItemid());
+    }
 }
