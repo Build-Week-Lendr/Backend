@@ -104,4 +104,18 @@ public class ItemController {
 
         return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
     }
+
+    @PutMapping(value = "/item/{itemid}", consumes = {"application/json"})
+    public ResponseEntity<?> updateItem(HttpServletRequest request,
+                                        Authentication authentication,
+                                        @Valid @RequestBody Item updateItem,
+                                        @PathVariable long itemid) {
+
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+
+        User u = userService.findByName(authentication.getName());
+
+        itemService.update(updateItem, itemid, u);
+        return  new ResponseEntity<>(HttpStatus.OK);
+    }
 }

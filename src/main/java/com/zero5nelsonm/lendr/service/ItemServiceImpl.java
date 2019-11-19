@@ -4,6 +4,7 @@ import com.zero5nelsonm.lendr.exceptions.ResourceFoundException;
 import com.zero5nelsonm.lendr.exceptions.ResourceNotFoundException;
 import com.zero5nelsonm.lendr.logging.Loggable;
 import com.zero5nelsonm.lendr.model.Item;
+import com.zero5nelsonm.lendr.model.ItemHistory;
 import com.zero5nelsonm.lendr.model.User;
 import com.zero5nelsonm.lendr.repository.ItemHistoryRepository;
 import com.zero5nelsonm.lendr.repository.ItemRepository;
@@ -50,5 +51,37 @@ public class ItemServiceImpl implements ItemService {
         }
 
         return itemRepository.save(item);
+    }
+
+    @Override
+    public Item update(Item updateItem, long itemid, User user) {
+
+        if (itemRepository.checkItemByIdForUserByIdExists(itemid, user.getUserid()).getCount() < 1) {
+            throw new ResourceNotFoundException("Item ID " + itemid + " does not exist for that user!");
+        }
+
+        Item existingItem = itemRepository.findItemByItemid(itemid);
+
+        if (updateItem.getItemname() != null) {
+            existingItem.setItemname(updateItem.getItemname());
+        }
+
+        if (updateItem.getItemdescription() != null) {
+            existingItem.setItemdescription(updateItem.getItemdescription());
+        }
+
+        if (updateItem.getLentto() != null) {
+            existingItem.setLentto(updateItem.getLentto());
+        }
+
+        if (updateItem.getLentdate() != null) {
+            existingItem.setLentdate(updateItem.getLentdate());
+        }
+
+        if (updateItem.getLendnotes() != null) {
+            existingItem.setLendnotes(updateItem.getLendnotes());
+        }
+
+        return itemRepository.save(existingItem);
     }
 }

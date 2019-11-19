@@ -12,4 +12,6 @@ public interface ItemService {
     Item findItemByIdForUser(User user, long itemid);
 
     Item save(Item item);
+
+    Item update(Item updateItem, long itemid, User user);
 }
