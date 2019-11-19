@@ -3,6 +3,8 @@ Lendr Backend
 
 BASE_URL = https://zero5nelsonm-lendr.herokuapp.com  
 
+Detailed API Documentation can be found at endpoint: "/v2/api-docs"
+
 *Note* - All id's (userid, itemid, itemhistoryid) are of type `long`
 
 ## Login  
