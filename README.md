@@ -68,7 +68,7 @@ Lendr Backend
 
 <h2 id="apiinfo">Basic Api Info</h2>
 
-Base Url: "https://zero5nelsonm-lendr.herokuapp.com"  
+BASEURL: https://zero5nelsonm-lendr.herokuapp.com  
   
 Documentation Website: https://zero5nelsonm-lendr.herokuapp.com/swagger-ui.html  
 Documentation Endpoint: "/v2/api-docs"  
@@ -175,14 +175,14 @@ new Item is created.
 Status 201 Created && `itemid` in the header under `Location`  
 
 **Example:**  
-Sending a POST request to "BASEURL/items/item" with the following data 
+Sending a POST request to `BASEURL/items/item` with the following data 
 ```
 {
     "itemname": "Chainsaw"
 }
 ```  
 
-Will create an item that looks like the following when you send a GET request `/items/item/{itemid}` for  
+Will create an item that looks like the following when you send a GET request to `BASEURL/items/item/{itemid}` for  
 the newly created item.  
 ```  
 {
@@ -291,8 +291,8 @@ The Item's field's for `lentto`, `lentdate`, and `lendnotes` will be transfered 
 for that Item, and then those fields for the Item will be set to `null`. The `datereturned` for the  
 new ItemHistory will automatically be generated.
 
-**Example**
-Sending a GET request to "BASEURL/items/item/8" returns:  
+**Example:**  
+Sending a GET request to `BASEURL/items/item/8` returns:  
 ```
 {
     "itemid": 8,
@@ -313,7 +313,7 @@ Sending a GET request to "BASEURL/items/item/8" returns:
 }
 ```  
 
-Sending a GET request to "BASEURL/items/item/8?beingreturned=true" returns:  
+Sending a GET request to `BASEURL/items/item/8?beingreturned=true` returns:  
 ```
 {
     "itemid": 8,
@@ -362,16 +362,16 @@ Oauth2 Header info
 **Returns:**  
 Status 200 OK  
 
-**Example**  
-Sending a PUT request to "BASEURL/items/item/8" with the following data  
+**Example:**  
+Sending a PUT request to `BASEURL/items/item/8` with the following data  
 ```  
 {
 	"lentto": "Katlin",
 	"lentdate": "August 5, 2019"
 }
 ```  
-Will update the item. Then when you send a GET request `/items/item/8` for the newly  
-updated item it will look like:  
+Will update the item. Then when you send a GET request to `BASEURL/items/item/8` for  
+the newly updated item it will look like:  
 ```  
 {
     "itemid": 8,
@@ -404,8 +404,8 @@ updated item it will look like:
 DELETE  
 Endpoint: "/items/item/{itemid}"  
 
-**Accepts**
+**Accepts:**  
 Oauth2 Header info  
 
-**Returns**  
-Status 200 OK
+**Returns:**  
+Status 200 OK  
