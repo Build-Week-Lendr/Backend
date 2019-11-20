@@ -10,6 +10,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "itemhistory")
 @ApiModel(value = "ItemHistory", description = "A list of an item's history of being lent")
+@JsonIgnoreProperties("item")
 public class ItemHistory extends Auditable {
 
     @Id
