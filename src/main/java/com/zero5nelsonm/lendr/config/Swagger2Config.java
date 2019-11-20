@@ -45,6 +45,8 @@ public class Swagger2Config {
                                 "Endpoints driven by users"),
                         new Tag("ItemEndpoints",
                                 "Endpoints driven by items"),
+                        new Tag("ItemHistoryEndpoints",
+                                "Endpoints driven by itemhistories"),
                         new Tag("LogoutEndpoint",
                                 "Endpoint for logging out a user"),
                         new Tag("OpenEndpoint",
