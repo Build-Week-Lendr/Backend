@@ -1,5 +1,6 @@
 Lendr Backend
 =============
+<h3 id="tableofcontents">Table of Contents</h3>  
 
 *   [Data Models](#datamodels)
 *   [Basic Api Info](#apiinfo)
@@ -18,6 +19,8 @@ Lendr Backend
     *   [Delete Item](#deleteitem)
 
 <h2 id="datamodels">Data Models</h2>  
+
+[Back to Table of Contents](#tableofcontents)  
 
 *Note* - All id's (userid, itemid, itemhistoryid) are of type `long` and are automatically generated and returned to you.  
 
@@ -66,7 +69,9 @@ Lendr Backend
 }
 ```  
 
-<h2 id="apiinfo">Basic Api Info</h2>
+<h2 id="apiinfo">Basic Api Info</h2>  
+
+[Back to Table of Contents](#tableofcontents)  
 
 BASEURL: https://zero5nelsonm-lendr.herokuapp.com  
   
@@ -93,6 +98,8 @@ Status 200 OK
 
 <h2 id="logout">Logout</h2>  
 
+[Back to Table of Contents](#tableofcontents)  
+
 GET  
 Endpoint: "/logout"  
 
@@ -103,6 +110,8 @@ Oauth2 Header info
 Status 200 OK  
 
 <h2 id="createnewuser">Create New User</h2>  
+
+[Back to Table of Contents](#tableofcontents)  
 
 POST  
 Endpoint: "/createnewuser"  
@@ -135,6 +144,8 @@ recieve only the header information back and no JSON.
 
 <h2 id="getuserinfo">Get User Information</h2>  
 
+[Back to Table of Contents](#tableofcontents)  
+
 GET  
 Endpoint = "/users/getuserinfo"  
 
@@ -151,7 +162,9 @@ Status 200 OK
 }
 ```  
 
-<h2 id="login">Create Item  </h2>
+<h2 id="login">Create Item</h2>  
+
+[Back to Table of Contents](#tableofcontents)  
 
 POST  
 Endpoint = "/items/item"  
@@ -198,6 +211,8 @@ the newly created item.
 where `itemhistories` is a List of ItemHistory (See Data Models above).  
 
 <h2 id="listitems">List Items</h2>  
+
+[Back to Table of Contents](#tableofcontents)  
 
 GET  
 Endpoint: "/items/items"  
@@ -252,6 +267,8 @@ A list of Items for the authenticated user, for example:
 ```  
 
 <h2 id="getitembyid">Get Item By Id</h2>  
+
+[Back to Table of Contents](#tableofcontents)  
 
 GET  
 Endpoint: "/items/item/{itemid}"  
@@ -343,6 +360,8 @@ Sending a GET request to `BASEURL/items/item/8?beingreturned=true` returns:
 
 <h2 id="updateitem">Update Item</h2>  
 
+[Back to Table of Contents](#tableofcontents)  
+
 PUT  
 Endpoint: "/items/item/{itemid}"  
 
@@ -400,6 +419,8 @@ the newly updated item it will look like:
 ```  
 
 <h2 id="deleteitem">Delete Item</h2>  
+
+[Back to Table of Contents](#tableofcontents)  
 
 DELETE  
 Endpoint: "/items/item/{itemid}"  
