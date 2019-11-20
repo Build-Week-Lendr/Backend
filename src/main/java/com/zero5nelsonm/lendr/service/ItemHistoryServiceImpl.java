@@ -36,4 +36,9 @@ public class ItemHistoryServiceImpl implements ItemHistoryService {
 
         return itemHistory;
     }
+
+    @Override
+    public ItemHistory save(ItemHistory itemHistory) {
+        return itemHistoryRepository.save(itemHistory);
+    }
 }

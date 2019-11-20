@@ -143,7 +143,7 @@ public class ItemController {
      * @param newItem : Item
      * */
     @ApiOperation(
-            value = "Adds a new item for the authenticated user",
+            value = "Adds a new Item for the authenticated user",
             response = Void.class)
     @ApiResponses(
             value = {

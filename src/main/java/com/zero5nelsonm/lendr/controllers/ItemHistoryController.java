@@ -8,22 +8,20 @@ import com.zero5nelsonm.lendr.model.User;
 import com.zero5nelsonm.lendr.service.ItemHistoryService;
 import com.zero5nelsonm.lendr.service.ItemService;
 import com.zero5nelsonm.lendr.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.net.URI;
 
 @RestController
 @RequestMapping("/itemhistory")
@@ -48,7 +46,7 @@ public class ItemHistoryController {
      * @param itemid : long
      * */
     @ApiOperation(
-            value = "Returns a list of ItemHistory based off of itemid",
+            value = "Returns all ItemHistory for an Item based off of itemid",
             response = ItemHistory.class,
             responseContainer = "List")
     @ApiResponses(
@@ -56,7 +54,8 @@ public class ItemHistoryController {
                     @ApiResponse(
                             code = 200,
                             message = "ItemHistory Found",
-                            response = ItemHistory.class),
+                            response = ItemHistory.class,
+                            responseContainer = "List"),
                     @ApiResponse(
                             code = 404,
                             message = "Item id {itemid} not found!",
@@ -104,6 +103,54 @@ public class ItemHistoryController {
         ItemHistory itemHistory = itemHistoryService.findItemHistoryByIdForUser(u, itemhistoryid);
 
         return new ResponseEntity<>(itemHistory, HttpStatus.OK);
+    }
+
+    /**
+     * POST
+     * http://localhost:2019/itemhistory/item/{itemid}
+     * @param itemid : long
+     * @param newItemHistory : ItemHistory
+     * */
+    @ApiOperation(
+            value = "Adds a new ItemHistory based off of itemid",
+            response = Void.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            code = 201,
+                            message = "ItemHistory Created",
+                            response = Void.class,
+                            responseHeaders = @ResponseHeader(
+                                    name = "Location",
+                                    description = "Returns itemhistoryid for newly created ItemHistory in the header",
+                                    response = Void.class
+                            )),
+                    @ApiResponse(
+                            code = 404,
+                            message = "Item id not found!",
+                            response = ErrorDetail.class)
+            })
+    @PostMapping(value = "/item/{itemid}", consumes = {"application/json"}, produces = {"application/json"})
+    public ResponseEntity<?> addNewItemHistory(HttpServletRequest request,
+                                               Authentication authentication,
+                                               @Valid @RequestBody ItemHistory newItemHistory,
+                                               @PathVariable long itemid) {
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+
+        User u = userService.findByName(authentication.getName());
+        Item item = itemService.findItemByIdForUser(u, itemid);
+
+        newItemHistory.setItem(item);
+
+        ItemHistory createdItemHistory = itemHistoryService.save(newItemHistory);
+
+        HttpHeaders responseHeaders = new HttpHeaders();
+        URI newUserURI = ServletUriComponentsBuilder.fromUriString(request.getServerName() + ":" + request.getLocalPort() + "/itemhistory/{itemhistoryid}")
+                .buildAndExpand(createdItemHistory.getItemhistoryid())
+                .toUri();
+        responseHeaders.setLocation(newUserURI);
+
+        return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
     }
 
     /**

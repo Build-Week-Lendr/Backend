@@ -6,4 +6,6 @@ import com.zero5nelsonm.lendr.model.User;
 public interface ItemHistoryService {
 
     ItemHistory findItemHistoryByIdForUser(User user, long itemhistoryid);
+
+    ItemHistory save(ItemHistory itemHistory);
 }
