@@ -2,6 +2,7 @@ package com.zero5nelsonm.lendr.controllers;
 
 import com.zero5nelsonm.lendr.logging.Loggable;
 import com.zero5nelsonm.lendr.model.ErrorDetail;
+import com.zero5nelsonm.lendr.model.Item;
 import com.zero5nelsonm.lendr.model.ItemHistory;
 import com.zero5nelsonm.lendr.model.User;
 import com.zero5nelsonm.lendr.service.ItemHistoryService;
@@ -40,6 +41,38 @@ public class ItemHistoryController {
 
     @Autowired
     UserService userService;
+
+    /**
+     * GET
+     * http://localhost:2019/itemhistory/item/{itemid}
+     * @param itemid : long
+     * */
+    @ApiOperation(
+            value = "Returns a list of ItemHistory based off of itemid",
+            response = ItemHistory.class,
+            responseContainer = "List")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            code = 200,
+                            message = "ItemHistory Found",
+                            response = ItemHistory.class),
+                    @ApiResponse(
+                            code = 404,
+                            message = "Item id {itemid} not found!",
+                            response = ErrorDetail.class)
+            })
+    @GetMapping(value = "/item/{itemid}", produces = {"application/json"})
+    public ResponseEntity<?> getItemhistoriesForItemById(HttpServletRequest request,
+                                                         Authentication authentication,
+                                                         @PathVariable long itemid) {
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+
+        User u = userService.findByName(authentication.getName());
+        Item item = itemService.findItemByIdForUser(u, itemid);
+
+        return new ResponseEntity<>(item.getItemhistories(), HttpStatus.OK);
+    }
 
     /**
      * GET
