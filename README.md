@@ -41,7 +41,7 @@ Lendr Backend
     "lentdate": String,
     "lendnotes": String,
     "itemhistories": List<ItemHistory>
-    }
+}
 ```
 
 **ItemHistory** 
