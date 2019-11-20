@@ -2,7 +2,6 @@ package com.zero5nelsonm.lendr.service;
 
 import com.zero5nelsonm.lendr.exceptions.ResourceNotFoundException;
 import com.zero5nelsonm.lendr.logging.Loggable;
-import com.zero5nelsonm.lendr.model.Item;
 import com.zero5nelsonm.lendr.model.ItemHistory;
 import com.zero5nelsonm.lendr.model.User;
 import com.zero5nelsonm.lendr.repository.ItemHistoryRepository;
@@ -40,5 +39,29 @@ public class ItemHistoryServiceImpl implements ItemHistoryService {
     @Override
     public ItemHistory save(ItemHistory itemHistory) {
         return itemHistoryRepository.save(itemHistory);
+    }
+
+    @Override
+    public ItemHistory update(ItemHistory updateItemHistory, long itemhistoryid, User user) {
+
+        ItemHistory existingItemHistory = findItemHistoryByIdForUser(user, itemhistoryid);
+
+        if (updateItemHistory.getLentto() != null) {
+            existingItemHistory.setLentto(updateItemHistory.getLentto());
+        }
+
+        if (updateItemHistory.getLentdate() != null) {
+            existingItemHistory.setLentdate(updateItemHistory.getLentdate());
+        }
+
+        if (updateItemHistory.getLendnotes() != null) {
+            existingItemHistory.setLendnotes(updateItemHistory.getLendnotes());
+        }
+
+        if (updateItemHistory.getDatereturned() != null) {
+            existingItemHistory.setDatereturned(updateItemHistory.getDatereturned());
+        }
+
+        return itemHistoryRepository.save(existingItemHistory);
     }
 }

@@ -89,7 +89,7 @@ public class ItemHistoryController {
                             response = ItemHistory.class),
                     @ApiResponse(
                             code = 404,
-                            message = "ItemHistory id not found!",
+                            message = "ItemHistory id {itemhistoryid} not found!",
                             response = ErrorDetail.class)
             })
     @GetMapping(value = "/{itemhistoryid}", produces = {"application/json"})
@@ -127,7 +127,7 @@ public class ItemHistoryController {
                             )),
                     @ApiResponse(
                             code = 404,
-                            message = "Item id not found!",
+                            message = "Item id {itemid} not found!",
                             response = ErrorDetail.class)
             })
     @PostMapping(value = "/item/{itemid}", consumes = {"application/json"}, produces = {"application/json"})
@@ -159,6 +159,32 @@ public class ItemHistoryController {
      * @param itemhistoryid : long
      * @param updateItemHistory : ItemHistory
      * */
+    @ApiOperation(
+            value = "Updates an ItemHistory",
+            response = Void.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            code = 200,
+                            message = "ItemHistory Updated",
+                            response = Void.class),
+                    @ApiResponse(
+                            code = 400,
+                            message = "ItemHistory id {itemhistoryid} not found!",
+                            response = ErrorDetail.class)
+            })
+    @PutMapping(value = "/{itemhistoryid}", consumes = {"application/json"})
+    public ResponseEntity<?> updateItem(HttpServletRequest request,
+                                        Authentication authentication,
+                                        @Valid @RequestBody ItemHistory updateItemHistory,
+                                        @PathVariable long itemhistoryid) {
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+
+        User u = userService.findByName(authentication.getName());
+
+        itemHistoryService.update(updateItemHistory, itemhistoryid, u);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     /**
      * DELETE

@@ -188,7 +188,7 @@ public class ItemController {
      * @param itemid : long
      * */
     @ApiOperation(
-            value = "Adds a new item for the authenticated user",
+            value = "Updates an Item for the authenticated user",
             response = Void.class)
     @ApiResponses(
             value = {
@@ -215,7 +215,7 @@ public class ItemController {
         User u = userService.findByName(authentication.getName());
 
         itemService.update(updateItem, itemid, u);
-        return  new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**

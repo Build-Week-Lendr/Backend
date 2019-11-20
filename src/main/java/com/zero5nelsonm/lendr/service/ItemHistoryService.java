@@ -8,4 +8,6 @@ public interface ItemHistoryService {
     ItemHistory findItemHistoryByIdForUser(User user, long itemhistoryid);
 
     ItemHistory save(ItemHistory itemHistory);
+
+    ItemHistory update(ItemHistory updateItemHistory, long itemhistoryid, User user);
 }
