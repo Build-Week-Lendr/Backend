@@ -87,6 +87,9 @@ Documentation Endpoint: "/v2/api-docs"
 
 <h2 id="login">Login</h2>  
 
+[Back to Table of Contents](#tableofcontents)  
+
+POST  
 Endpoint: "/login"  
 
 **Accepts:**  
