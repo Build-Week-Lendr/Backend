@@ -1,12 +1,13 @@
 package com.zero5nelsonm.lendr.controllers;
 
 import com.zero5nelsonm.lendr.logging.Loggable;
+import com.zero5nelsonm.lendr.model.ErrorDetail;
 import com.zero5nelsonm.lendr.model.User;
 import com.zero5nelsonm.lendr.model.UserMinimum;
 import com.zero5nelsonm.lendr.model.UserRoles;
 import com.zero5nelsonm.lendr.service.RoleService;
 import com.zero5nelsonm.lendr.service.UserService;
-import io.swagger.annotations.Api;
+import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,17 +38,6 @@ public class OpenController {
     @Autowired
     private RoleService roleService;
 
-    // Create the user and Return the access token
-    // http://localhost:2019/createnewuser
-    // Just create the user
-    // http://localhost:2019/createnewuser?returninfo=false
-    //
-    // {
-    //     "username" : "Test",
-    //     "password" : "test123",
-    //     "email" : "test@test.com"
-    // }
-
     private String getPort(HttpServletRequest httpServletRequest) {
         if (httpServletRequest.getServerName()
                 .equalsIgnoreCase("localhost")) {
@@ -57,13 +47,48 @@ public class OpenController {
         }
     }
 
+    /**
+     * POST
+     * http://localhost:2019/createnewuser
+     * http://localhost:2019/createnewuser?returninfo=false
+     * @param newminuser : UserMinimum
+     * */
+    @ApiOperation(
+            value = "Creates a new user",
+            response = User.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            code = 201,
+                            message = "User Created",
+                            response = User.class,
+                            responseHeaders = @ResponseHeader(
+                                    name = "Location",
+                                    description = "Returns userid for newly created user in the header",
+                                    response = Void.class
+                            )),
+                    @ApiResponse(
+                            code = 400,
+                            message = "Username already exists",
+                            response = ErrorDetail.class),
+                    @ApiResponse(
+                            code = 400,
+                            message = "Email is already associated with a username",
+                            response = ErrorDetail.class)
+            })
+    @ApiParam(
+            name = "returninfo",
+            defaultValue = "true",
+            type = "boolean",
+            required = false,
+            value = "Will return nothing if set equal to false",
+            example = "BASEURL/createnewuser?returninfo=false")
     @PostMapping(value = "/createnewuser", consumes = {"application/json"}, produces = {"application/json"})
     public ResponseEntity<?> addNewUser(HttpServletRequest httpServletRequest,
                                         @RequestParam(defaultValue = "true") boolean returninfo,
-                                        @Valid
-                                        @RequestBody UserMinimum newminuser) throws URISyntaxException {
-        logger.trace(httpServletRequest.getMethod()
-                .toUpperCase() + " " + httpServletRequest.getRequestURI() + " accessed");
+                                        @Valid @RequestBody UserMinimum newminuser) throws URISyntaxException {
+        logger.trace(
+                httpServletRequest.getMethod().toUpperCase() + " " + httpServletRequest.getRequestURI() + " accessed");
 
         // Create the user
         User newuser = new User();

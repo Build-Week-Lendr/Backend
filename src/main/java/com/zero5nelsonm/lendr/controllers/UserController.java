@@ -1,5 +1,6 @@
 package com.zero5nelsonm.lendr.controllers;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.zero5nelsonm.lendr.handlers.RestExceptionHandler;
 import com.zero5nelsonm.lendr.logging.Loggable;
 import com.zero5nelsonm.lendr.model.ErrorDetail;
@@ -35,27 +36,37 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // http://localhost:2019/users/users/?page=1&size=1
-    // http://localhost:2019/users/users/?sort=username,desc&sort=<field>,asc
-    // http://localhost:2019/users/users
-    @ApiOperation(value = "returns all Users with paging and sorting",
+    /**
+     * GET:
+     * http://localhost:2019/users/users/?page=1&size=1
+     * http://localhost:2019/users/users/?sort=username,desc&sort=<field>,asc
+     * http://localhost:2019/users/users
+     * */
+    @ApiOperation(
+            value = "Returns all users with paging and sorting [Admin]",
             response = User.class,
             responseContainer = "List")
-    @ApiImplicitParams({@ApiImplicitParam(name = "page",
-            dataType = "integer",
-            paramType = "query",
-            value = "Results page you want to retrieve (1..N)"), @ApiImplicitParam(name = "size",
-            dataType = "integer",
-            paramType = "query",
-            value = "Number of records per page."), @ApiImplicitParam(name = "sort",
-            allowMultiple = true,
-            dataType = "string",
-            paramType = "query",
-            value = "Sorting criteria in the format: property(,asc|desc). " + "Default sort order is ascending. " + "Multiple sort criteria are supported.")})
-
+    @ApiImplicitParams(
+            value = {
+                    @ApiImplicitParam(
+                            name = "page",
+                            dataType = "integer",
+                            paramType = "query",
+                            value = "Results page you want to retrieve (1..N)"),
+                    @ApiImplicitParam(
+                            name = "size",
+                            dataType = "integer",
+                            paramType = "query",
+                            value = "Number of records per page."),
+                    @ApiImplicitParam(
+                            name = "sort",
+                            allowMultiple = true,
+                            dataType = "string",
+                            paramType = "query",
+                            value = "Sorting criteria in the format: property(,asc|desc). " + "Default sort order is ascending. " + "Multiple sort criteria are supported.")
+            })
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @GetMapping(value = "/users",
-            produces = {"application/json"})
+    @GetMapping(value = "/users", produces = {"application/json"})
     public ResponseEntity<?> listAllUsers(HttpServletRequest request,
                                           @PageableDefault(page = 0, size = 5) Pageable pageable) {
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
@@ -65,8 +76,12 @@ public class UserController {
                 HttpStatus.OK);
     }
 
-    // http://localhost:2019/users/allusers
-    @ApiOperation(value = "returns all Users without paging or sorting",
+    /**
+     * GET
+     * http://localhost:2019/users/allusers
+     * */
+    @ApiOperation(
+            value = "Returns all Users without paging or sorting [Admin]",
             response = User.class,
             responseContainer = "List")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -76,56 +91,89 @@ public class UserController {
         return new ResponseEntity<>(myUsers, HttpStatus.OK);
     }
 
-    // http://localhost:2019/users/user/{userid}
-    @ApiOperation(value = "Retrieve a user based of off user id", response = User.class)
-    @ApiResponses(value = {@ApiResponse(code = 200,
-            message = "User Found",
-            response = User.class), @ApiResponse(code = 404,
-            message = "User Not Found",
-            response = ErrorDetail.class)})
+    /**
+     * GET
+     * http://localhost:2019/users/user/{userid}
+     * @param userid : long
+     * */
+    @ApiOperation(
+            value = "Retrieve a user based of off user id [Admin]",
+            response = User.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            code = 200,
+                            message = "User Found",
+                            response = User.class),
+                    @ApiResponse(
+                            code = 404,
+                            message = "User Not Found",
+                            response = ErrorDetail.class)
+            })
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @GetMapping(value = "/user/{userId}", produces = {"application/json"})
+    @GetMapping(value = "/user/{userid}", produces = {"application/json"})
     public ResponseEntity<?> getUserById(HttpServletRequest request,
                                          @ApiParam(value = "User id", required = true, example = "4")
-                                         @PathVariable Long userId) {
+                                         @PathVariable Long userid) {
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
-        User u = userService.findUserById(userId);
-        return new ResponseEntity<>(u,
-                HttpStatus.OK);
-    }
-
-    // http://localhost:2019/users/user/name/{username}
-    @ApiOperation(value = "returns the user based off of user name",
-            response = User.class)
-    @ApiResponses(value = {@ApiResponse(code = 200,
-            message = "User Found",
-            response = User.class), @ApiResponse(code = 404,
-            message = "User Not Found",
-            response = ErrorDetail.class)})
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @GetMapping(value = "/user/name/{userName}",
-            produces = {"application/json"})
-    public ResponseEntity<?> getUserByName(HttpServletRequest request,
-                                           @ApiParam(value = "Username", required = true, example = "somename")
-                                           @PathVariable String userName) {
-        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
-
-        User u = userService.findByName(userName);
+        User u = userService.findUserById(userid);
         return new ResponseEntity<>(u, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "adds a user given in the request body", response = Void.class)
-    @ApiResponses(value = {@ApiResponse(code = 200,
-            message = "User Found",
-            response = User.class), @ApiResponse(code = 404,
-            message = "User Not Found",
-            response = ErrorDetail.class)})
+    /**
+     * GET
+     * http://localhost:2019/users/user/name/{username}
+     * @param username : String
+     * */
+    @ApiOperation(
+            value = "Returns the user based off of user name [Admin]",
+            response = User.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            code = 200,
+                            message = "User Found",
+                            response = User.class),
+                    @ApiResponse(
+                            code = 404,
+                            message = "User Not Found",
+                            response = ErrorDetail.class)
+            })
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @GetMapping(value = "/user/name/{username}", produces = {"application/json"})
+    public ResponseEntity<?> getUserByName(HttpServletRequest request,
+                                           @ApiParam(value = "Username", required = true, example = "somename")
+                                           @PathVariable String username) {
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+
+        User u = userService.findByName(username);
+        return new ResponseEntity<>(u, HttpStatus.OK);
+    }
+
+    /**
+     * POST
+     * http://localhost:2019/users/user
+     * @param newuser : User
+     * */
+    @ApiOperation(
+            value = "Adds a user given in the request body [Admin]",
+            response = Void.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            code = 201,
+                            message = "User Created",
+                            response = Void.class),
+                    @ApiResponse(
+                            code = 404,
+                            message = "User Not Found",
+                            response = ErrorDetail.class)
+            })
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping(value = "/user", consumes = {"application/json"})
     public ResponseEntity<?> addNewUser(HttpServletRequest request,
-                                        @Valid
-                                        @RequestBody User newuser) throws URISyntaxException {
+                                        @Valid @RequestBody User newuser) throws URISyntaxException {
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
         newuser = userService.save(newuser);
@@ -141,46 +189,76 @@ public class UserController {
         return new ResponseEntity<>(null, responseHeaders, HttpStatus.CREATED);
     }
 
-    // http://localhost:2019/users/user/{userid}
-    @PutMapping(value = "/user/{id}",
-            consumes = {"application/json"})
+    /**
+     * PUT
+     * http://localhost:2019/users/user/{userid}
+     * @param userid : long
+     * */
+    @ApiOperation(
+            value = "Updates a user [Admin]",
+            response = Void.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            code = 200,
+                            message = "User Found",
+                            response = Void.class),
+                    @ApiResponse(
+                            code = 404,
+                            message = "User Not Found",
+                            response = ErrorDetail.class)
+            })
+    @PutMapping(value = "/user/{userid}", consumes = {"application/json"})
     public ResponseEntity<?> updateUser(HttpServletRequest request,
                                         @RequestBody User updateUser,
-                                        @PathVariable long id) {
+                                        @PathVariable long userid) {
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
-        userService.update(updateUser, id, request.isUserInRole("ADMIN"));
+        userService.update(updateUser, userid, request.isUserInRole("ADMIN"));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // http://localhost:2019/users/user/{userid}
+    /**
+     * DELETE
+     * http://localhost:2019/users/user/{userid}
+     * @param userid : long
+     * */
+    @ApiOperation(
+            value = "Deletes a user [Admin]",
+            response = Void.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            code = 200,
+                            message = "User Found",
+                            response = Void.class),
+                    @ApiResponse(
+                            code = 404,
+                            message = "User Not Found",
+                            response = ErrorDetail.class)
+            })
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @DeleteMapping(value = "/user/{id}")
+    @DeleteMapping(value = "/user/{userid}")
     public ResponseEntity<?> deleteUserById(HttpServletRequest request,
-                                            @PathVariable long id) {
+                                            @PathVariable long userid) {
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
-        userService.delete(id);
+        userService.delete(userid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // http://localhost:2019/users/getuserinfo
-    @GetMapping(value = "/getuserinfo",
-            produces = {"application/json"})
+    /**
+     * GET
+     * http://localhost:2019/users/getuserinfo
+     * */
+    @ApiOperation(
+            value = "Returns user information for the authenticated user",
+            response = User.class)
+    @GetMapping(value = "/getuserinfo", produces = {"application/json"})
     public ResponseEntity<?> getCurrentUserInfo(HttpServletRequest request, Authentication authentication) {
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
         User u = userService.findByName(authentication.getName());
         return new ResponseEntity<>(u, HttpStatus.OK);
-    }
-
-    // http://localhost:2019/users/getusername
-    @GetMapping(value = "/getusername",
-            produces = {"application/json"})
-    @ResponseBody
-    public ResponseEntity<?> getCurrentUserName(HttpServletRequest request, Authentication authentication) {
-        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
-
-        return new ResponseEntity<>(authentication.getPrincipal(), HttpStatus.OK);
     }
 }

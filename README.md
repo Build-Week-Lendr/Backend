@@ -1,13 +1,25 @@
 Lendr Backend
 =============
 
-BASE_URL = https://zero5nelsonm-lendr.herokuapp.com  
+*   [Data Models](#datamodels)
+*   [Basic Api Info](#apiinfo)
+*   Open Endpoints
+    *   [Login](#login)
+*   Logout Endpoints
+    *   [Logout](#logout)
+*   User Endpoints
+    *   [Create New User](#createnewuser)
+    *   [Get User Information](#getuserinfo)
+*   Item Endpoints
+    *   [List Items](#listitems)
+    *   [Get Item By Id](#getitembyid)
+        *   [Submit Item As Being Returned](#beingreturned)
+    *   [Update Item](#updateitem)
+    *   [Delete Item](#deleteitem)
 
-Detailed API Documentation can be found at endpoint: "/v2/api-docs"
+<h2 id="datamodels">Data Models</h2>  
 
-*Note* - All id's (userid, itemid, itemhistoryid) are of type `long` and are automatically generated and returned to you.
-
-## Data Models  
+*Note* - All id's (userid, itemid, itemhistoryid) are of type `long` and are automatically generated and returned to you.  
 
 **Item**  
 ```
@@ -53,15 +65,23 @@ Detailed API Documentation can be found at endpoint: "/v2/api-docs"
     ]
 }
 ```  
-  
-## Login  
 
-Endpoint = "/login"  
+<h2 id="apiinfo">Basic Api Info</h2>
+
+BASEURL: https://zero5nelsonm-lendr.herokuapp.com  
+  
+Documentation Website: https://zero5nelsonm-lendr.herokuapp.com/swagger-ui.html  
+Documentation Endpoint: "/v2/api-docs"  
+
+<h2 id="login">Login</h2>  
+
+Endpoint: "/login"  
 
 **Accepts:**  
 Oauth2 Header info  
 
 **Returns:**  
+Status 200 OK  
 ```
 {
     "access_token": String,  
@@ -71,10 +91,10 @@ Oauth2 Header info
 }
 ```
 
-## Logout  
+<h2 id="logout">Logout</h2>  
 
 GET  
-Endpoint = "/logout"  
+Endpoint: "/logout"  
 
 **Accepts:**  
 Oauth2 Header info  
@@ -82,14 +102,14 @@ Oauth2 Header info
 **Returns:**  
 Status 200 OK  
 
-## Create a new user  
+<h2 id="createnewuser">Create New User</h2>  
 
 POST  
-Endpoint = "/createnewuser"  
+Endpoint: "/createnewuser"  
   
 **Accepts:**  
 Oauth2 Header info  
-Required field(s) = **ALL**  
+Required field(s): **ALL**  
 *Note* - `email` must use standard email format  
 ```
 {
@@ -100,7 +120,7 @@ Required field(s) = **ALL**
 ```
 
 **Returns:**  
-Status 201 Created && `userid` in the header under `Location`
+Status 201 Created && `userid` in the return header under `Location`
 ```
 {
     "access_token": String,  
@@ -113,7 +133,7 @@ Status 201 Created && `userid` in the header under `Location`
 Alternatively, you can append the aforementioned endpoint with `?returninfo=false` to  
 recieve only the header information back and no JSON.  
 
-## Get user information for an authenticated user  
+<h2 id="getuserinfo">Get User Information</h2>  
 
 GET  
 Endpoint = "/users/getuserinfo"  
@@ -131,15 +151,16 @@ Status 200 OK
 }
 ```  
 
-## Create an item  
+<h2 id="login">Create Item  </h2>
 
 POST  
 Endpoint = "/items/item"  
 
 **Accepts:**  
 Oauth2 Header info  
-Required field(s) = `itemname`  
-*Note* - Fields that are NOT sent with the POST request will automatically default to `null`.  
+Required field(s): `itemname`  
+*Note* - Fields that are NOT sent with the POST request will automatically default to `null` when the  
+new Item is created.  
 ```
 {
     "itemname": String,  
@@ -154,15 +175,15 @@ Required field(s) = `itemname`
 Status 201 Created && `itemid` in the header under `Location`  
 
 **Example:**  
-With an authenticated user, send the following to "/items/item" as a POST request 
+Sending a POST request to `BASEURL/items/item` with the following data 
 ```
 {
     "itemname": "Chainsaw"
 }
 ```  
 
-Will create an item that looks like the following when you query for the `itemid`, or list all items  
-for the user.  
+Will create an item that looks like the following when you send a GET request to `BASEURL/items/item/{itemid}` for  
+the newly created item.  
 ```  
 {
     "itemid": 10,
@@ -174,12 +195,12 @@ for the user.
     "itemhistories": []
 }
 ``` 
-where `itemhistories` is a List of ItemHistory (See data models at top of README).  
+where `itemhistories` is a List of ItemHistory (See Data Models above).  
 
-## List all items for a user  
+<h2 id="listitems">List Items</h2>  
 
 GET  
-Endpoint = "/items/items"  
+Endpoint: "/items/items"  
 
 **Accepts:**  
 Oauth2 Header info  
@@ -228,4 +249,163 @@ A list of Items for the authenticated user, for example:
         "itemhistories": []
     }
 ]
+```  
+
+<h2 id="getitembyid">Get Item By Id</h2>  
+
+GET  
+Endpoint: "/items/item/{itemid}"  
+
+**Accepts:**  
+Oauth2 Header info  
+
+**Returns:**  
+Status 200 OK  
+The requested item, for example  
+```  
+{
+    "itemid": 8,
+    "itemname": "Chop Saw",
+    "itemdescription": "Dewalt Chop Saw",
+    "lentto": "Jake",
+    "lentdate": "February 13, 2019",
+    "lendnotes": "Last time I am lending to Jake...",
+    "itemhistories": [
+        {
+            "itemhistoryid": 10,
+            "lentto": "Allen",
+            "lentdate": "November 21, 2019",
+            "lendnotes": null,
+            "datereturned": "11-19-2019"
+        }
+    ]
+}
+```  
+
+<h3 id="beingreturned">Submit Item As Being Returned</h3>  
+
+Alternatively, you can append the Get Item By Id endpoint with `?beingreturned=true`, and  
+it will do some magic for you.  
+
+The Item's field's for `lentto`, `lentdate`, and `lendnotes` will be transfered to a new ItemHistory  
+for that Item, and then those fields for the Item will be set to `null`. The `datereturned` for the  
+new ItemHistory will automatically be generated.
+
+**Example:**  
+Sending a GET request to `BASEURL/items/item/8` returns:  
 ```
+{
+    "itemid": 8,
+    "itemname": "Chop Saw",
+    "itemdescription": "Dewalt Chop Saw",
+    "lentto": "Jake",
+    "lentdate": "February 13, 2019",
+    "lendnotes": "Last time I am lending to Jake...",
+    "itemhistories": [
+        {
+            "itemhistoryid": 10,
+            "lentto": "Allen",
+            "lentdate": "November 21, 2019",
+            "lendnotes": null,
+            "datereturned": "11-19-2019"
+        }
+    ]
+}
+```  
+
+Sending a GET request to `BASEURL/items/item/8?beingreturned=true` returns:  
+```
+{
+    "itemid": 8,
+    "itemname": "Chop Saw",
+    "itemdescription": "Dewalt Chop Saw",
+    "lentto": null,
+    "lentdate": null,
+    "lendnotes": null,
+    "itemhistories": [
+        {
+            "itemhistoryid": 10,
+            "lentto": "Allen",
+            "lentdate": "November 21, 2019",
+            "lendnotes": null,
+            "datereturned": "11-19-2019"
+        },
+        {
+            "itemhistoryid": 11,
+            "lentto": "Jake",
+            "lentdate": "February 13, 2019",
+            "lendnotes": "Last time I am lending to Jake...",
+            "datereturned": "11-20-2019"
+        }
+    ]
+}
+```  
+
+<h2 id="updateitem">Update Item</h2>  
+
+PUT  
+Endpoint: "/items/item/{itemid}"  
+
+**Accepts**  
+Oauth2 Header info  
+*Note* - You can send only the field(s) needing to be updated if you wish.  
+```  
+{
+    "itemname:" String,
+    "itemdescription:" String,
+    "lentto": String,
+    "lentdate": String,
+    "lendnotes": String
+}
+```  
+
+**Returns:**  
+Status 200 OK  
+
+**Example:**  
+Sending a PUT request to `BASEURL/items/item/8` with the following data  
+```  
+{
+	"lentto": "Katlin",
+	"lentdate": "August 5, 2019"
+}
+```  
+Will update the item. Then when you send a GET request to `BASEURL/items/item/8` for  
+the newly updated item it will look like:  
+```  
+{
+    "itemid": 8,
+    "itemname": "Chop Saw",
+    "itemdescription": "Dewalt Chop Saw",
+    "lentto": "Katlin",
+    "lentdate": "August 5, 2019",
+    "lendnotes": null,
+    "itemhistories": [
+        {
+            "itemhistoryid": 10,
+            "lentto": "Allen",
+            "lentdate": "November 21, 2019",
+            "lendnotes": null,
+            "datereturned": "11-19-2019"
+        },
+        {
+            "itemhistoryid": 11,
+            "lentto": "Jake",
+            "lentdate": "February 13, 2019",
+            "lendnotes": "Last time I am lending to Jake...",
+            "datereturned": "11-20-2019"
+        }
+    ]
+}
+```  
+
+<h2 id="deleteitem">Delete Item</h2>  
+
+DELETE  
+Endpoint: "/items/item/{itemid}"  
+
+**Accepts:**  
+Oauth2 Header info  
+
+**Returns:**  
+Status 200 OK  
