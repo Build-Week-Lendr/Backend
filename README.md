@@ -1,5 +1,6 @@
 Lendr Backend
 =============
+<h3 id="tableofcontents">Table of Contents</h3>  
 
 *   [Data Models](#datamodels)
 *   [Basic Api Info](#apiinfo)
@@ -11,13 +12,22 @@ Lendr Backend
     *   [Create New User](#createnewuser)
     *   [Get User Information](#getuserinfo)
 *   Item Endpoints
+    *	[Create Item](#createitem)
     *   [List Items](#listitems)
-    *   [Get Item By Id](#getitembyid)
-        *   [Submit Item As Being Returned](#beingreturned)
+    *   [Get Item by Id](#getitembyid)
+        *   [Submit Item as Being Returned](#beingreturned)
     *   [Update Item](#updateitem)
     *   [Delete Item](#deleteitem)
+*   ItemHistory Endpoints
+    *	[List ItemHistory for an Item](#listitemhistory)
+    *	[Get ItemHistory by Id](#getitemhistorybyid)
+    *	[Create ItemHistory for an Item](#createitemhistory)
+    *	[Update ItemHistory](#updateitemhistory)
+    *   [Delete ItemHistory](#deleteitemhistory)
 
 <h2 id="datamodels">Data Models</h2>  
+
+[Back to Table of Contents](#tableofcontents)  
 
 *Note* - All id's (userid, itemid, itemhistoryid) are of type `long` and are automatically generated and returned to you.  
 
@@ -31,7 +41,7 @@ Lendr Backend
     "lentdate": String,
     "lendnotes": String,
     "itemhistories": List<ItemHistory>
-    }
+}
 ```
 
 **ItemHistory** 
@@ -66,7 +76,9 @@ Lendr Backend
 }
 ```  
 
-<h2 id="apiinfo">Basic Api Info</h2>
+<h2 id="apiinfo">Basic Api Info</h2>  
+
+[Back to Table of Contents](#tableofcontents)  
 
 BASEURL: https://zero5nelsonm-lendr.herokuapp.com  
   
@@ -93,6 +105,8 @@ Status 200 OK
 
 <h2 id="logout">Logout</h2>  
 
+[Back to Table of Contents](#tableofcontents)  
+
 GET  
 Endpoint: "/logout"  
 
@@ -104,11 +118,14 @@ Status 200 OK
 
 <h2 id="createnewuser">Create New User</h2>  
 
+[Back to Table of Contents](#tableofcontents)  
+
 POST  
 Endpoint: "/createnewuser"  
   
 **Accepts:**  
 Oauth2 Header info  
+
 Required field(s): **ALL**  
 *Note* - `email` must use standard email format  
 ```
@@ -135,6 +152,8 @@ recieve only the header information back and no JSON.
 
 <h2 id="getuserinfo">Get User Information</h2>  
 
+[Back to Table of Contents](#tableofcontents)  
+
 GET  
 Endpoint = "/users/getuserinfo"  
 
@@ -151,16 +170,19 @@ Status 200 OK
 }
 ```  
 
-<h2 id="login">Create Item  </h2>
+<h2 id="createitem">Create Item</h2>  
+
+[Back to Table of Contents](#tableofcontents)  
 
 POST  
 Endpoint = "/items/item"  
 
 **Accepts:**  
 Oauth2 Header info  
-Required field(s): `itemname`  
-*Note* - Fields that are NOT sent with the POST request will automatically default to `null` when the  
-new Item is created.  
+
+*    Body requires an Item  
+*    Required field(s): `itemname`  
+*    *Note* - Fields that are NOT sent with the POST request will automatically default to `null` when the new Item is created.  
 ```
 {
     "itemname": String,  
@@ -199,13 +221,16 @@ where `itemhistories` is a List of ItemHistory (See Data Models above).
 
 <h2 id="listitems">List Items</h2>  
 
+[Back to Table of Contents](#tableofcontents)  
+
 GET  
 Endpoint: "/items/items"  
 
 **Accepts:**  
 Oauth2 Header info  
-*Note* - This endpoint will return a list of Items where `itemhistories` is an empty  
-list. If you wish to have `itemhistories` included, append the endpoint with `?returnitemhistory=true`
+
+*Note* - By default, this endpoint will return a list of Items where `itemhistories` is an empty  
+list. If you wish to have the Item's `itemhistories` included, append the endpoint with `?returnitemhistory=true`.
 
 **Returns:**  
 Status 200 OK  
@@ -251,7 +276,9 @@ A list of Items for the authenticated user, for example:
 ]
 ```  
 
-<h2 id="getitembyid">Get Item By Id</h2>  
+<h2 id="getitembyid">Get Item by Id</h2>  
+
+[Back to Table of Contents](#tableofcontents)  
 
 GET  
 Endpoint: "/items/item/{itemid}"  
@@ -261,7 +288,7 @@ Oauth2 Header info
 
 **Returns:**  
 Status 200 OK  
-The requested item, for example  
+The requested item, for example:  
 ```  
 {
     "itemid": 8,
@@ -282,7 +309,7 @@ The requested item, for example
 }
 ```  
 
-<h3 id="beingreturned">Submit Item As Being Returned</h3>  
+<h3 id="beingreturned">Submit Item as Being Returned</h3>  
 
 Alternatively, you can append the Get Item By Id endpoint with `?beingreturned=true`, and  
 it will do some magic for you.  
@@ -343,12 +370,17 @@ Sending a GET request to `BASEURL/items/item/8?beingreturned=true` returns:
 
 <h2 id="updateitem">Update Item</h2>  
 
+[Back to Table of Contents](#tableofcontents)  
+
 PUT  
 Endpoint: "/items/item/{itemid}"  
 
 **Accepts**  
 Oauth2 Header info  
-*Note* - You can send only the field(s) needing to be updated if you wish.  
+
+*    Body requires an Item  
+*    Required field(s): **NONE**  
+*    *Note* - You can send only the individual field(s) needing to be updated if you wish.  
 ```  
 {
     "itemname:" String,
@@ -401,8 +433,167 @@ the newly updated item it will look like:
 
 <h2 id="deleteitem">Delete Item</h2>  
 
+[Back to Table of Contents](#tableofcontents)  
+
 DELETE  
 Endpoint: "/items/item/{itemid}"  
+
+**Accepts:**  
+Oauth2 Header info  
+
+**Returns:**  
+Status 200 OK  
+
+<h2 id="listitemhistory">List ItemHistory for an Item</h2>  
+
+[Back to Table of Contents](#tableofcontents)  
+
+GET  
+Endpoint: "/itemhistory/item/{itemid}"  
+
+**Accepts:**  
+Oauth2 Header info  
+
+**Returns:**  
+Status 200 OK  
+A list of ItemHistory for the Item, for example:  
+```  
+[
+    {
+        "itemhistoryid": 10,
+        "lentto": "Allen",
+        "lentdate": "November 21, 2019",
+        "lendnotes": null,
+        "datereturned": "11-19-2019"
+    },
+    {
+        "itemhistoryid": 11,
+        "lentto": "Jake",
+        "lentdate": "February 13, 2019",
+        "lendnotes": "Last time I am lending to Jake...",
+        "datereturned": "11-20-2019"
+    }
+]
+```  
+
+<h2 id="getitemhistorybyid">Get ItemHistory by Id</h2>  
+
+[Back to Table of Contents](#tableofcontents)  
+
+GET  
+Endpoint: "/itemhistory/{itemhistoryid}"  
+
+**Accepts:**  
+Oauth2 Header info  
+
+**Returns:**  
+Status 200 OK  
+The requested ItemHistory, for example:  
+```  
+{
+    "itemhistoryid": 11,
+    "lentto": "Jake",
+    "lentdate": "February 13, 2019",
+    "lendnotes": "Last time I am lending to Jake...",
+    "datereturned": "11-20-2019"
+}
+```  
+
+<h2 id="createitemhistory">Create ItemHistory for an Item</h2>  
+
+[Back to Table of Contents](#tableofcontents)  
+
+POST  
+Endpoint = "/itemhistory/item/{itemid}"  
+
+**Accepts:**  
+Oauth2 Header info  
+
+*    Body requires an ItemHistory  
+*    Required field(s): **NONE**  
+*    *Note* - Fields that are NOT sent with the POST request will automatically default to `null` when the new ItemHistory is created.  
+```
+{
+    "lentto": String,
+    "lentdate": String,
+    "lendnotes": String,
+    "datereturned": String
+}
+```  
+
+**Returns:**  
+Status 201 Created && `itemhistoryid` in the header under `Location`  
+
+**Example:**  
+Sending a POST request to `BASEURL/itemhistory/item/8` with the following data  
+```
+{
+    "lentto": "Alice",
+    "lentdate": "August 23, 2019"
+}
+```  
+
+Will create an item that looks like the following when you send a GET request to `BASEURL/itemhistory/12` for the newly created ItemHistory.  
+```  
+{
+    "itemhistoryid": 12,
+    "lentto": "Alice",
+    "lentdate": "August 23, 2019",
+    "lendnotes": null,
+    "datereturned": null
+}
+```  
+
+<h2 id="updateitemhistory">Update ItemHistory</h2>  
+
+[Back to Table of Contents](#tableofcontents)  
+
+PUT  
+Endpoing: "/itemhistory/{itemhistoryid}"  
+
+**Accepts:**  
+Oauth2 Header info  
+
+*    Body requires an ItemHistory  
+*    Required field(s): **NONE**  
+*    *Note* - You can send only the individual field(s) needing to be updated if you wish.  
+```  
+{
+    "lentto": String,
+    "lentdate": String,
+    "lendnotes": String,
+    "datereturned": String
+}
+```  
+
+**Returns:**  
+Status 200 OK  
+
+**Example:**  
+Sending a PUT request to `BASEURL/itemhistory/12` with the following data  
+```  
+{
+	"lendnotes": "Returned it soaking wet!"
+}
+```  
+Will update the ItemHistory. Then when you send a GET request to `BASEURL/itemhistory/12` for  
+the newly updated ItemHistory, it will look like:  
+```  
+{
+    "itemhistoryid": 12,
+    "lentto": "Alice",
+    "lentdate": "August 23, 2019",
+    "lendnotes": "Returned it soaking wet!",
+    "datereturned": null
+}
+```  
+
+<h2 id="deleteitemhistory">Delete ItemHistory</h2>  
+
+[Back to Table of Contents](#tableofcontents)  
+
+DELETE  
+Endpoint: "/itemhistory/{itemhistoryid}"  
 
 **Accepts:**  
 Oauth2 Header info  

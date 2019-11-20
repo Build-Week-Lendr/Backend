@@ -1,6 +1,5 @@
 package com.zero5nelsonm.lendr.controllers;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.zero5nelsonm.lendr.logging.Loggable;
 import com.zero5nelsonm.lendr.model.*;
 import com.zero5nelsonm.lendr.service.ItemService;
@@ -99,7 +98,7 @@ public class ItemController {
                             response = Item.class),
                     @ApiResponse(
                             code = 404,
-                            message = "Itemid does not exist for that user!",
+                            message = "Item id {itemid} not found!",
                             response = ErrorDetail.class)
             })
     @ApiParam(
@@ -144,7 +143,7 @@ public class ItemController {
      * @param newItem : Item
      * */
     @ApiOperation(
-            value = "Adds a new item for the authenticated user",
+            value = "Adds a new Item for the authenticated user",
             response = Void.class)
     @ApiResponses(
             value = {
@@ -159,7 +158,7 @@ public class ItemController {
                             )),
                     @ApiResponse(
                             code = 400,
-                            message = "Itemname already exists!",
+                            message = "Item name {itemname} already exists!",
                             response = ErrorDetail.class)
             })
     @PostMapping(value = "/item", consumes = {"application/json"}, produces = {"application/json"})
@@ -184,12 +183,12 @@ public class ItemController {
 
     /**
      * PUT
-     * http://localhost:2019/items/item
+     * http://localhost:2019/items/item/{itemid}
      * @param updateItem : Item
      * @param itemid : long
      * */
     @ApiOperation(
-            value = "Adds a new item for the authenticated user",
+            value = "Updates an Item based off of itemid",
             response = Void.class)
     @ApiResponses(
             value = {
@@ -199,33 +198,33 @@ public class ItemController {
                             response = Void.class),
                     @ApiResponse(
                             code = 400,
-                            message = "Itemname already exists!",
+                            message = "Item name {itemname} already exists!",
                             response = ErrorDetail.class),
                     @ApiResponse(
-                            code = 400,
-                            message = "Itemid does not exist for that user!",
+                            code = 404,
+                            message = "Item id {itemid} not found!",
                             response = ErrorDetail.class)
             })
     @PutMapping(value = "/item/{itemid}", consumes = {"application/json"})
     public ResponseEntity<?> updateItem(HttpServletRequest request,
                                         Authentication authentication,
                                         @Valid @RequestBody Item updateItem,
-                                        @PathVariable long itemid) {
+                                        @PathVariable long itemid) throws URISyntaxException {
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
         User u = userService.findByName(authentication.getName());
 
         itemService.update(updateItem, itemid, u);
-        return  new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
      * DELETE
-     * http://localhost:2019/items/item
+     * http://localhost:2019/items/item/{itemid}
      * @param itemid : long
      * */
     @ApiOperation(
-            value = "Adds a new item for the authenticated user",
+            value = "Deletes an Item based off of itemid",
             response = Void.class)
     @ApiResponses(
             value = {
@@ -234,8 +233,8 @@ public class ItemController {
                             message = "Item Deleted",
                             response = Void.class),
                     @ApiResponse(
-                            code = 400,
-                            message = "Itemid does not exist for that user!",
+                            code = 404,
+                            message = "Item id {itemid} not found!",
                             response = ErrorDetail.class)
             })
     @DeleteMapping(value = "/item/{itemid}")
