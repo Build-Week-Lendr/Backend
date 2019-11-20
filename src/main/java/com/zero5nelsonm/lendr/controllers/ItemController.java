@@ -183,12 +183,12 @@ public class ItemController {
 
     /**
      * PUT
-     * http://localhost:2019/items/item
+     * http://localhost:2019/items/item/{itemid}
      * @param updateItem : Item
      * @param itemid : long
      * */
     @ApiOperation(
-            value = "Updates an Item for the authenticated user",
+            value = "Updates an Item based off of itemid",
             response = Void.class)
     @ApiResponses(
             value = {
@@ -201,7 +201,7 @@ public class ItemController {
                             message = "Item name {itemname} already exists!",
                             response = ErrorDetail.class),
                     @ApiResponse(
-                            code = 400,
+                            code = 404,
                             message = "Item id {itemid} not found!",
                             response = ErrorDetail.class)
             })
@@ -209,7 +209,7 @@ public class ItemController {
     public ResponseEntity<?> updateItem(HttpServletRequest request,
                                         Authentication authentication,
                                         @Valid @RequestBody Item updateItem,
-                                        @PathVariable long itemid) {
+                                        @PathVariable long itemid) throws URISyntaxException {
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
         User u = userService.findByName(authentication.getName());
@@ -220,11 +220,11 @@ public class ItemController {
 
     /**
      * DELETE
-     * http://localhost:2019/items/item
+     * http://localhost:2019/items/item/{itemid}
      * @param itemid : long
      * */
     @ApiOperation(
-            value = "Adds a new item for the authenticated user",
+            value = "Deletes an Item based off of itemid",
             response = Void.class)
     @ApiResponses(
             value = {
@@ -233,7 +233,7 @@ public class ItemController {
                             message = "Item Deleted",
                             response = Void.class),
                     @ApiResponse(
-                            code = 400,
+                            code = 404,
                             message = "Item id {itemid} not found!",
                             response = ErrorDetail.class)
             })

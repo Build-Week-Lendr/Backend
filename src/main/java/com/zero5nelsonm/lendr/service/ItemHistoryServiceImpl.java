@@ -64,4 +64,11 @@ public class ItemHistoryServiceImpl implements ItemHistoryService {
 
         return itemHistoryRepository.save(existingItemHistory);
     }
+
+    @Override
+    public void delete(User user, long itemhistoryid) {
+
+        ItemHistory itemHistory = findItemHistoryByIdForUser(user, itemhistoryid);
+        itemHistoryRepository.delete(itemHistory);
+    }
 }

@@ -10,4 +10,6 @@ public interface ItemHistoryService {
     ItemHistory save(ItemHistory itemHistory);
 
     ItemHistory update(ItemHistory updateItemHistory, long itemhistoryid, User user);
+
+    void delete(User user, long itemhistoryid);
 }

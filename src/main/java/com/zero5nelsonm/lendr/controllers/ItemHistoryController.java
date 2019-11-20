@@ -22,6 +22,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 @RestController
 @RequestMapping("/itemhistory")
@@ -134,7 +135,7 @@ public class ItemHistoryController {
     public ResponseEntity<?> addNewItemHistory(HttpServletRequest request,
                                                Authentication authentication,
                                                @Valid @RequestBody ItemHistory newItemHistory,
-                                               @PathVariable long itemid) {
+                                               @PathVariable long itemid) throws URISyntaxException {
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
         User u = userService.findByName(authentication.getName());
@@ -169,7 +170,7 @@ public class ItemHistoryController {
                             message = "ItemHistory Updated",
                             response = Void.class),
                     @ApiResponse(
-                            code = 400,
+                            code = 404,
                             message = "ItemHistory id {itemhistoryid} not found!",
                             response = ErrorDetail.class)
             })
@@ -177,7 +178,7 @@ public class ItemHistoryController {
     public ResponseEntity<?> updateItem(HttpServletRequest request,
                                         Authentication authentication,
                                         @Valid @RequestBody ItemHistory updateItemHistory,
-                                        @PathVariable long itemhistoryid) {
+                                        @PathVariable long itemhistoryid) throws URISyntaxException {
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
         User u = userService.findByName(authentication.getName());
@@ -191,4 +192,30 @@ public class ItemHistoryController {
      * http://localhost:2019/itemhistory/{itemhistoryid}
      * @param itemhistoryid : long
      * */
+    @ApiOperation(
+            value = "Deletes an ItemHistory based off of itemhistoryid",
+            response = Void.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            code = 200,
+                            message = "ItemHistory Deleted",
+                            response = Void.class),
+                    @ApiResponse(
+                            code = 404,
+                            message = "ItemHistory id {itemhistoryid} not found!",
+                            response = ErrorDetail.class)
+            })
+    @DeleteMapping(value = "/{itemhistoryid}")
+    public ResponseEntity<?> deleteItemById(HttpServletRequest request,
+                                            Authentication authentication,
+                                            @PathVariable long itemhistoryid) {
+
+        logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
+
+        User u = userService.findByName(authentication.getName());
+
+        itemHistoryService.delete(u, itemhistoryid);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
