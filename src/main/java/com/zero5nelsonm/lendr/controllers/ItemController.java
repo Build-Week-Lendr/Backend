@@ -1,13 +1,11 @@
 package com.zero5nelsonm.lendr.controllers;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.zero5nelsonm.lendr.logging.Loggable;
-import com.zero5nelsonm.lendr.model.Item;
-import com.zero5nelsonm.lendr.model.ItemHistory;
-import com.zero5nelsonm.lendr.model.ItemNoHistory;
-import com.zero5nelsonm.lendr.model.User;
+import com.zero5nelsonm.lendr.model.*;
 import com.zero5nelsonm.lendr.service.ItemService;
 import com.zero5nelsonm.lendr.service.UserService;
-import io.swagger.annotations.Api;
+import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,21 +39,34 @@ public class ItemController {
     @Autowired
     UserService userService;
 
+    /**
+     * GET
+     * http://localhost:2019/items/items
+     * http://localhost:2019/items/items?returnitemhistory=true
+     * */
+    @ApiOperation(
+            value = "Returns all Items for an authenticated user",
+            response = Item.class,
+            responseContainer = "List")
+    @ApiParam(
+            name = "returnitemhistory",
+            defaultValue = "false",
+            type = "boolean",
+            required = false,
+            value = "Will return Items with their ItemHistory if set to true," +
+                    "otherwise itemhistories field is returned as an empty List",
+            example = "BASEURL/items/items?returnitemhistory=true")
     @GetMapping(value = "/items", produces = {"application/json"})
     public ResponseEntity<?> getCurrentUserItems(HttpServletRequest request,
                                                  Authentication authentication,
                                                  @RequestParam(defaultValue = "false") boolean returnitemhistory) {
-
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
         User u = userService.findByName(authentication.getName());
-
         List<Item> itemList = itemService.findAllByUsername(u.getUsername());
 
         List<ItemNoHistory> itemNoHistories = new ArrayList<>();
-
         if (!returnitemhistory) {
-
             for (Item i : itemList) {
                 itemNoHistories.add(
                         new ItemNoHistory(
@@ -68,23 +78,47 @@ public class ItemController {
                                 i.getLendnotes())
                 );
             }
-
             return new ResponseEntity<>(itemNoHistories, HttpStatus.OK);
         }
-
         return new ResponseEntity<>(itemList, HttpStatus.OK);
     }
 
+    /**
+     * GET
+     * http://localhost:2019/items/item/{itemid}
+     * @param itemid : long
+     * */
+    @ApiOperation(
+            value = "Returns an Item based off of itemid",
+            response = Item.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            code = 200,
+                            message = "Item Found",
+                            response = Item.class),
+                    @ApiResponse(
+                            code = 404,
+                            message = "Itemid does not exist for that user!",
+                            response = ErrorDetail.class)
+            })
+    @ApiParam(
+            name = "beingreturned",
+            defaultValue = "false",
+            type = "boolean",
+            required = false,
+            value = "If set to true, the Item will have its field's [lentto, lentdate, lendnotes] placed " +
+                    "into a new ItemHistory and will be reset to null. The reset Item with it's new history " +
+                    "will be returned.",
+            example = "BASEURL/items/item/8?beingreturned=true")
     @GetMapping(value = "/item/{itemid}", produces = {"application/json"})
     public ResponseEntity<?> getCurrentUserItem(HttpServletRequest request,
                                                 Authentication authentication,
                                                 @PathVariable long itemid,
                                                 @RequestParam(defaultValue = "false") boolean beingreturned) {
-
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
         User u = userService.findByName(authentication.getName());
-
         Item item = itemService.findItemByIdForUser(u, itemid);
 
         ItemHistory newItemHistory = new ItemHistory();
@@ -101,16 +135,37 @@ public class ItemController {
 
             item = itemService.itemHasBeenReturned(item, newItemHistory);
         }
-
         return new ResponseEntity<>(item, HttpStatus.OK);
     }
 
+    /**
+     * POST
+     * http://localhost:2019/items/item
+     * @param newItem : Item
+     * */
+    @ApiOperation(
+            value = "Adds a new item for the authenticated user",
+            response = Void.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            code = 201,
+                            message = "Item Created",
+                            response = Void.class,
+                            responseHeaders = @ResponseHeader(
+                                    name = "Location",
+                                    description = "Returns itemid for newly created item in the header",
+                                    response = Void.class
+                            )),
+                    @ApiResponse(
+                            code = 400,
+                            message = "Itemname already exists!",
+                            response = ErrorDetail.class)
+            })
     @PostMapping(value = "/item", consumes = {"application/json"}, produces = {"application/json"})
     public ResponseEntity<?> addNewItem(HttpServletRequest request,
                                         Authentication authentication,
-                                        @Valid @RequestBody Item newItem)
-            throws URISyntaxException {
-
+                                        @Valid @RequestBody Item newItem) throws URISyntaxException {
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
         User u = userService.findByName(authentication.getName());
@@ -127,12 +182,35 @@ public class ItemController {
         return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
     }
 
+    /**
+     * PUT
+     * http://localhost:2019/items/item
+     * @param updateItem : Item
+     * @param itemid : long
+     * */
+    @ApiOperation(
+            value = "Adds a new item for the authenticated user",
+            response = Void.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            code = 200,
+                            message = "Item Updated",
+                            response = Void.class),
+                    @ApiResponse(
+                            code = 400,
+                            message = "Itemname already exists!",
+                            response = ErrorDetail.class),
+                    @ApiResponse(
+                            code = 400,
+                            message = "Itemid does not exist for that user!",
+                            response = ErrorDetail.class)
+            })
     @PutMapping(value = "/item/{itemid}", consumes = {"application/json"})
     public ResponseEntity<?> updateItem(HttpServletRequest request,
                                         Authentication authentication,
                                         @Valid @RequestBody Item updateItem,
                                         @PathVariable long itemid) {
-
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
 
         User u = userService.findByName(authentication.getName());
@@ -141,6 +219,25 @@ public class ItemController {
         return  new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * DELETE
+     * http://localhost:2019/items/item
+     * @param itemid : long
+     * */
+    @ApiOperation(
+            value = "Adds a new item for the authenticated user",
+            response = Void.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            code = 200,
+                            message = "Item Deleted",
+                            response = Void.class),
+                    @ApiResponse(
+                            code = 400,
+                            message = "Itemid does not exist for that user!",
+                            response = ErrorDetail.class)
+            })
     @DeleteMapping(value = "/item/{itemid}")
     public ResponseEntity<?> deleteItemById(HttpServletRequest request,
                                             Authentication authentication,

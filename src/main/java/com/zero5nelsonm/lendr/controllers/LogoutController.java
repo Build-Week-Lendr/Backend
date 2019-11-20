@@ -29,6 +29,14 @@ public class LogoutController {
     @Autowired
     private TokenStore tokenStore;
 
+    /**
+     * GET
+     * http://localhost:2019/logout
+     * http://localhost:2019/oauth/revoke-token
+     * */
+    @ApiOperation(
+            value = "Logs out an authenticated user",
+            response = Void.class)
     @GetMapping(value = {"/oauth/revoke-token", "/logout"})
     @ResponseStatus(HttpStatus.OK)
     public void logout(HttpServletRequest request) {

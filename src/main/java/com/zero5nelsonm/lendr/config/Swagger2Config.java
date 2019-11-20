@@ -44,7 +44,7 @@ public class Swagger2Config {
                 .tags(new Tag("UserEndpoints",
                                 "Endpoints driven by users"),
                         new Tag("ItemEndpoints",
-                                "Endpoints driven by roles"),
+                                "Endpoints driven by items"),
                         new Tag("LogoutEndpoint",
                                 "Endpoint for logging out a user"),
                         new Tag("OpenEndpoint",
