@@ -87,6 +87,9 @@ Documentation Endpoint: "/v2/api-docs"
 
 <h2 id="login">Login</h2>  
 
+[Back to Table of Contents](#tableofcontents)  
+
+POST  
 Endpoint: "/login"  
 
 **Accepts:**  
@@ -533,7 +536,7 @@ Sending a POST request to `BASEURL/itemhistory/item/8` with the following data
 }
 ```  
 
-Will create an item that looks like the following when you send a GET request to `BASEURL/itemhistory/12` for the newly created ItemHistory.  
+Will create an ItemHistory that looks like the following when you send a GET request to `BASEURL/itemhistory/12`:  
 ```  
 {
     "itemhistoryid": 12,
@@ -573,7 +576,7 @@ Status 200 OK
 Sending a PUT request to `BASEURL/itemhistory/12` with the following data  
 ```  
 {
-	"lendnotes": "Returned it soaking wet!"
+    "lendnotes": "Returned it soaking wet!"
 }
 ```  
 Will update the ItemHistory. Then when you send a GET request to `BASEURL/itemhistory/12` for  
