@@ -20,9 +20,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.awt.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -32,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ItemHistoryControllerIntigrationTest {
+public class ItemHistoryControllerIntegrationTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -55,7 +53,19 @@ public class ItemHistoryControllerIntigrationTest {
 
     @WithUserDetails("user_TEST")
     @Test
-    public void A_getItemhistoriesForItemByItemId() throws Exception {
+    public void A_whenMeasuredResponseTime() throws Exception {
+        long time = System.currentTimeMillis();
+        this.mockMvc.perform(get("/itemhistory/item/{itemid}", 9))
+                .andDo(print());
+        long responseTime = (System.currentTimeMillis() - time);
+
+        assertTrue("timestamp",
+                (responseTime < 5000L));
+    }
+
+    @WithUserDetails("user_TEST")
+    @Test
+    public void B_getItemhistoriesForItemByItemId() throws Exception {
         this.mockMvc.perform(get("/itemhistory/item/{itemid}", 9))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -64,7 +74,7 @@ public class ItemHistoryControllerIntigrationTest {
 
     @WithUserDetails("userdata_TEST")
     @Test
-    public void AA_getItemhistoriesForItemByItemId_ForItemNotBelongingToUser() throws Exception {
+    public void BB_getItemhistoriesForItemByItemId_ForItemNotBelongingToUser() throws Exception {
         this.mockMvc.perform(get("/itemhistory/item/{itemid}", 9))
                 .andDo(print())
                 .andExpect(status().is4xxClientError());
@@ -72,7 +82,7 @@ public class ItemHistoryControllerIntigrationTest {
 
     @WithUserDetails("user_TEST")
     @Test
-    public void B_getCurrentUserItemHistoryById() throws Exception {
+    public void C_getCurrentUserItemHistoryById() throws Exception {
         this.mockMvc.perform(get("/itemhistory/{itemhistoryid}", 11))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -81,7 +91,7 @@ public class ItemHistoryControllerIntigrationTest {
 
     @WithUserDetails("userdata_TEST")
     @Test
-    public void BB_getCurrentUserItemHistoryById_ForItemHistoryNotBelongingToUser() throws Exception {
+    public void CC_getCurrentUserItemHistoryById_ForItemHistoryNotBelongingToUser() throws Exception {
         this.mockMvc.perform(get("/itemhistory/{itemhistoryid}", 11))
                 .andDo(print())
                 .andExpect(status().is4xxClientError());
@@ -89,7 +99,7 @@ public class ItemHistoryControllerIntigrationTest {
 
     @WithUserDetails("user_TEST")
     @Test
-    public void C_addNewItemHistory() throws Exception {
+    public void D_addNewItemHistory() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/itemhistory/item/{itemid}", 9)
                         .content("{\"lentto\":\"Gary\"}")
@@ -104,7 +114,7 @@ public class ItemHistoryControllerIntigrationTest {
 
     @WithUserDetails("userdata_TEST")
     @Test
-    public void CC_addNewItemHistory_ForItemNotBelongingToUser() throws Exception {
+    public void DD_addNewItemHistory_ForItemNotBelongingToUser() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/itemhistory/item/{itemid}", 9)
                         .content("{\"lentto\":\"Gary\"}")
@@ -116,7 +126,7 @@ public class ItemHistoryControllerIntigrationTest {
 
     @WithUserDetails("user_TEST")
     @Test
-    public void D_updateItemHistoryById() throws Exception {
+    public void E_updateItemHistoryById() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/itemhistory/{itemhistoryid}", 11)
                         .content("{\"lentto\":\"Amber\"}")
@@ -127,7 +137,7 @@ public class ItemHistoryControllerIntigrationTest {
 
     @WithUserDetails("userdata_TEST")
     @Test
-    public void DD_updateItemHistoryById_ForItemHistoryNotBelongingToUser() throws Exception {
+    public void EE_updateItemHistoryById_ForItemHistoryNotBelongingToUser() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/itemhistory/{itemhistoryid}", 11)
                         .content("{\"lentto\":\"Amber\"}")
@@ -138,7 +148,7 @@ public class ItemHistoryControllerIntigrationTest {
 
     @WithUserDetails("user_TEST")
     @Test
-    public void E_deleteItemHistoryById() throws Exception {
+    public void F_deleteItemHistoryById() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/itemhistory/{itemhistoryid}", 11))
                 .andDo(print())
@@ -147,7 +157,7 @@ public class ItemHistoryControllerIntigrationTest {
 
     @WithUserDetails("user_TEST")
     @Test
-    public void EE_deleteItemHistoryById_ForItemHistoryNotBelongingToUser() throws Exception {
+    public void FF_deleteItemHistoryById_ForItemHistoryNotBelongingToUser() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/itemhistory/{itemhistoryid}", 8))
                 .andDo(print())
