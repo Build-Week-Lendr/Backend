@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.List;
 
 @Transactional
 @Component
@@ -47,9 +46,9 @@ public class SeedData implements CommandLineRunner {
                 r2));
         admins.add(new UserRoles(new User(),
                 r3));
-        User u1 = new User(System.getenv("LENDR_ADMIN_USERNAME"),
-                System.getenv("LENDR_ADMIN_PASSWORD"),
-                System.getenv("LENDR_ADMIN_EMAIL"),
+        User u1 = new User("admin_TEST",
+                "admin",
+                "admin@testing.com",
                 admins);
         userService.save(u1);
 
@@ -59,12 +58,12 @@ public class SeedData implements CommandLineRunner {
                 r3));
         datas.add(new UserRoles(new User(),
                 r2));
-        User u2 = new User(System.getenv("LENDR_DATA_USERNAME"),
-                System.getenv("LENDR_DATA_PASSWORD"),
-                System.getenv("LENDR_DATA_EMAIL"),
+        User u2 = new User("userdata_TEST",
+                "userdata",
+                "userdata@testing.com",
                 datas);
         u2.getUseritems()
-                .add(new Item(u2, "Table Saw",
+                .add(new Item(u2, "Table Saw" + "_TEST",
                         "Dewalt Table Saw",
                         "Herbert",
                         "November 11, 2019",
@@ -75,34 +74,22 @@ public class SeedData implements CommandLineRunner {
         ArrayList<UserRoles> users = new ArrayList<>();
         users.add(new UserRoles(new User(),
                 r2));
-        User u3 = new User(System.getenv("LENDR_USER_USERNAME"),
-                System.getenv("LENDR_USER_PASSWORD"),
-                System.getenv("LENDR_USER_EMAIL"),
+        User u3 = new User("user_TEST",
+                "user",
+                "user@testing.com",
                 users);
         u3.getUseritems()
-                .add(new Item(u3, "Chop Saw",
+                .add(new Item(u3, "Chop Saw" + "_TEST",
                         "Dewalt Chop Saw",
                         "Allen",
                         "November 21, 2019",
                         null));
         u3.getUseritems()
-                .add(new Item(u3, "Drill",
+                .add(new Item(u3, "Drill" + "_TEST",
                         "Dewalt Drill",
                         "Kyle",
                         "November 21, 2019",
                         null));
-        u3.getUseritems().get(0).getItemhistories()
-                .add(new ItemHistory(u3.getUseritems().get(0),
-                        "Bob",
-                        "April 15, 2019",
-                        null,
-                        "May 21, 2019"));
-        u3.getUseritems().get(1).getItemhistories()
-                .add(new ItemHistory(u3.getUseritems().get(1),
-                        "Terry",
-                        "April 19, 2019",
-                        null,
-                        "April 27, 2019"));
         User user3 = userService.save(u3);
 
         Item u3Item0 = itemService.findItemByIdForUser(user3, user3.getUseritems().get(0).getItemid());
