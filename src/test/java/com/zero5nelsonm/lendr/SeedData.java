@@ -68,7 +68,14 @@ public class SeedData implements CommandLineRunner {
                         "Herbert",
                         "November 11, 2019",
                         ""));
-        userService.save(u2);
+        User user2 = userService.save(u2);
+
+        Item u2Item0 = itemService.findItemByIdForUser(user2, user2.getUseritems().get(0).getItemid());
+        itemHistoryService.save(new ItemHistory(u2Item0,
+                "Kerry",
+                "August 8, 2019",
+                "data/user",
+                "September 12, 2019"));
 
         // user
         ArrayList<UserRoles> users = new ArrayList<>();

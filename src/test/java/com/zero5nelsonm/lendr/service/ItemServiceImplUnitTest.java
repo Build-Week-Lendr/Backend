@@ -60,7 +60,7 @@ public class ItemServiceImplUnitTest {
 
     @Test
     public void B_findItemByIdForUser_ItemReturnsCorrectly() {
-        assertEquals(item8Name, itemService.findItemByIdForUser(user, 8).getItemname());
+        assertEquals(item8Name, itemService.findItemByIdForUser(user, 9).getItemname());
     }
 
     @Test(expected = ResourceNotFoundException.class)
@@ -71,7 +71,7 @@ public class ItemServiceImplUnitTest {
 
     @Test
     public void C_itemHasBeenReturned() {
-        Item item = itemService.findItemByIdForUser(user, 8);
+        Item item = itemService.findItemByIdForUser(user, 9);
 
         ItemHistory newItemHistory = new ItemHistory(
                 item,
@@ -80,13 +80,13 @@ public class ItemServiceImplUnitTest {
                 item.getLendnotes(),
                 null);
 
-        assertEquals("Bob", itemHistoryService.findItemHistoryByIdForUser(user, 10).getLentto());
+        assertEquals("Bob", itemHistoryService.findItemHistoryByIdForUser(user, 11).getLentto());
         assertEquals("Allen", item.getLentto());
 
         itemService.itemHasBeenReturned(item, newItemHistory);
 
-        assertNull(itemService.findItemByIdForUser(user, 8).getLentto());
-        assertEquals("Allen", itemHistoryService.findItemHistoryByIdForUser(user, 12).getLentto());
+        assertNull(itemService.findItemByIdForUser(user, 9).getLentto());
+        assertEquals("Allen", itemHistoryService.findItemHistoryByIdForUser(user, 13).getLentto());
     }
 
     @Test(expected = DataIntegrityViolationException.class)

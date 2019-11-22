@@ -63,7 +63,7 @@ public class ItemHistoryController {
                             response = ErrorDetail.class)
             })
     @GetMapping(value = "/item/{itemid}", produces = {"application/json"})
-    public ResponseEntity<?> getItemhistoriesForItemById(HttpServletRequest request,
+    public ResponseEntity<?> getItemhistoriesForItemByItemId(HttpServletRequest request,
                                                          Authentication authentication,
                                                          @PathVariable long itemid) {
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
@@ -94,7 +94,7 @@ public class ItemHistoryController {
                             response = ErrorDetail.class)
             })
     @GetMapping(value = "/{itemhistoryid}", produces = {"application/json"})
-    public ResponseEntity<?> getCurrentUserItemHistory(HttpServletRequest request,
+    public ResponseEntity<?> getCurrentUserItemHistoryById(HttpServletRequest request,
                                                        Authentication authentication,
                                                        @PathVariable long itemhistoryid) {
         logger.trace(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
@@ -175,7 +175,7 @@ public class ItemHistoryController {
                             response = ErrorDetail.class)
             })
     @PutMapping(value = "/{itemhistoryid}", consumes = {"application/json"})
-    public ResponseEntity<?> updateItem(HttpServletRequest request,
+    public ResponseEntity<?> updateItemHistoryById(HttpServletRequest request,
                                         Authentication authentication,
                                         @Valid @RequestBody ItemHistory updateItemHistory,
                                         @PathVariable long itemhistoryid) throws URISyntaxException {
@@ -207,7 +207,7 @@ public class ItemHistoryController {
                             response = ErrorDetail.class)
             })
     @DeleteMapping(value = "/{itemhistoryid}")
-    public ResponseEntity<?> deleteItemById(HttpServletRequest request,
+    public ResponseEntity<?> deleteItemHistoryById(HttpServletRequest request,
                                             Authentication authentication,
                                             @PathVariable long itemhistoryid) {
 
